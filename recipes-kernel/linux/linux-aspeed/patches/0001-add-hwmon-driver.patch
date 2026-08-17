@@ -1,0 +1,169 @@
+From 4d870ddf1de6048e97079b9f55e5e98790e01950 Mon Sep 17 00:00:00 2001
+From: jin_li <jin_li@muxi-connect.com>
+Date: Fri, 24 Apr 2026 09:19:39 +0000
+Subject: [PATCH] add hwmon driver
+
+Upstream-Status: Inappropriate [board-specific]
+
+---
+ drivers/hwmon/Kconfig        | 84 ++++++++++++++++++++++++++++++++++++
+ drivers/hwmon/Makefile       | 11 +++++
+ drivers/hwmon/pmbus/Kconfig  | 15 +++++++
+ drivers/hwmon/pmbus/Makefile |  2 +
+ 4 files changed, 112 insertions(+)
+
+diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
+index cb29a68fa2e0..14c943334e16 100644
+--- a/drivers/hwmon/Kconfig
++++ b/drivers/hwmon/Kconfig
+@@ -2670,6 +2670,91 @@ config SENSORS_INTEL_M10_BMC_HWMON
+ 	  sensors monitor various telemetry data of different components on the
+ 	  card, e.g. board temperature, FPGA core temperature/voltage/current.
+ 
++config I2CDEV_SYSFS
++	tristate "I2C device sysfs driver"
++	depends on I2C
++	help
++	  If you say yes here you get support for the I2C device sysfs driver.
++
++	  This driver can also be built as a module.
++
++config OBMCAT_BASE_CPLD
++	tristate "Accton OBMCAT base CPLD driver"
++	depends on I2CDEV_SYSFS
++	help
++	  If you say yes here you get support for Accton OBMCAT base CPLD driver.
++
++	  This driver can also be built as a module.
++
++config OBMCAT_OCM_CPLD
++	tristate "Accton OBMCAT OCM CPLD driver"
++	depends on I2CDEV_SYSFS
++	help
++	  If you say yes here you get support for Accton OBMCAT OCM CPLD driver.
++
++	  This driver can also be built as a module.
++
++config OBMCAT_SWITCH_FPGA
++	tristate "Accton OBMCAT switch FPGA driver"
++	depends on I2CDEV_SYSFS
++	help
++	  If you say yes here you get support for Accton OBMCAT switch FPGA driver.
++
++	  This driver can also be built as a module.
++
++config OBMCAT_PORT_CPLD
++	tristate "Accton OBMCAT port CPLD driver"
++	depends on I2CDEV_SYSFS
++	help
++	  If you say yes here you get support for Accton OBMCAT port CPLD driver.
++
++	  This driver can also be built as a module.
++
++config OBMCAT_MISC_CPLD
++	tristate "Accton OBMCAT misc CPLD driver"
++	depends on I2CDEV_SYSFS
++	help
++	  If you say yes here you get support for Accton OBMCAT misc CPLD driver.
++
++	  This driver can also be built as a module.
++
++config OBMCAT_FAN_CPLD
++	tristate "Accton OBMCAT fan CPLD driver"
++	depends on I2CDEV_SYSFS
++	help
++	  If you say yes here you get support fora Accton OBMCAT fan CPLD driver.
++
++	  This driver can also be built as a module.
++
++config OBMCAT_LED_CPLD
++	tristate "Accton OBMCAT LED CPLD driver"
++	depends on I2CDEV_SYSFS
++	help
++	  If you say yes here you get support for Accton OBMCAT LED CPLD driver.
++
++	  This driver can also be built as a module.
++
++config OBMCAT_PSU_DRIVER
++	tristate "Accton OBMCAT PSU driver"
++	depends on I2CDEV_SYSFS
++	help
++	  If you say yes here you get support for Accton OBMCAT PSU driver.
++
++	  This driver can also be built as a module.
++
++config OBMCAT_TPS544B25
++    tristate "Accton OBMCAT TPS544B25 driver"
++    depends on I2CDEV_SYSFS
++    help
++        If you say yes here you get support for Accton OBMCAT TPS544B25 driver.
++
++        This driver can also be built as a module.
++
++config SENSORS_ASICTEMP
++    tristate "NMX-36 ASIC tempature drivers"
++    help
++      If you say yes here you get support for ASIC tempature drivers.
++
+ if ACPI
+ 
+ comment "ACPI drivers"
+diff --git a/drivers/hwmon/Makefile b/drivers/hwmon/Makefile
+index 8c3693fe2b04..43a7a81938a4 100644
+--- a/drivers/hwmon/Makefile
++++ b/drivers/hwmon/Makefile
+@@ -245,6 +245,17 @@ obj-$(CONFIG_SENSORS_W83L786NG)	+= w83l786ng.o
+ obj-$(CONFIG_SENSORS_WM831X)	+= wm831x-hwmon.o
+ obj-$(CONFIG_SENSORS_WM8350)	+= wm8350-hwmon.o
+ obj-$(CONFIG_SENSORS_XGENE)	+= xgene-hwmon.o
++obj-$(CONFIG_I2CDEV_SYSFS)	+= i2c_dev_sysfs.o
++obj-$(CONFIG_OBMCAT_BASE_CPLD)	+= basecpld.o
++obj-$(CONFIG_OBMCAT_OCM_CPLD)	+= ocmcpld.o
++obj-$(CONFIG_OBMCAT_SWITCH_FPGA) += switchfpga.o
++obj-$(CONFIG_OBMCAT_PORT_CPLD)	+= portcpld.o
++obj-$(CONFIG_OBMCAT_MISC_CPLD)	+= misccpld.o
++obj-$(CONFIG_OBMCAT_FAN_CPLD)	+= fancpld.o
++obj-$(CONFIG_OBMCAT_LED_CPLD)	+= ledcpld.o
++obj-$(CONFIG_OBMCAT_TPS544B25)	+= tps544b25.o
++obj-$(CONFIG_OBMCAT_PSU_DRIVER) += psu_driver.o
++obj-$(CONFIG_SENSORS_ASICTEMP)  += asictemp_driver.o
+ 
+ obj-$(CONFIG_SENSORS_OCC)	+= occ/
+ obj-$(CONFIG_SENSORS_PECI)	+= peci/
+diff --git a/drivers/hwmon/pmbus/Kconfig b/drivers/hwmon/pmbus/Kconfig
+index da04ff6df28b..adc3f507e61e 100644
+--- a/drivers/hwmon/pmbus/Kconfig
++++ b/drivers/hwmon/pmbus/Kconfig
+@@ -682,4 +682,19 @@ config SENSORS_ZL6100
+ 	  This driver can also be built as a module. If so, the module will
+ 	  be called zl6100.
+ 
++config SENSORS_MP2985
++	tristate "MPS MP2985"
++	help
++	  If you say yes here you get hardware monitoring support for MPS
++	  MP2985B Digital, Multi-Phase Controller.
++
++	  This driver can also be built as a module. If so, the module will
++	  be called mp2985b.
++
++config SENSORS_INA3221
++	tristate "INA3221"
++	help
++	  If you say yes here you get hardware monitoring support for
++	  INA3221 Digital, Multi-Phase Controller.
++
+ endif # PMBUS
+diff --git a/drivers/hwmon/pmbus/Makefile b/drivers/hwmon/pmbus/Makefile
+index 4c5ff3f32c5e..fe81c9a3b615 100644
+--- a/drivers/hwmon/pmbus/Makefile
++++ b/drivers/hwmon/pmbus/Makefile
+@@ -67,3 +67,5 @@ obj-$(CONFIG_SENSORS_XDPE152)	+= xdpe152c4.o
+ obj-$(CONFIG_SENSORS_ZL6100)	+= zl6100.o
+ obj-$(CONFIG_SENSORS_PIM4328)	+= pim4328.o
+ obj-$(CONFIG_SENSORS_CRPS)	+= crps.o
++obj-$(CONFIG_SENSORS_MP2985)	+= mp2985.o
++obj-$(CONFIG_SENSORS_INA3221)   += ina3221.o
+-- 
+2.34.1
+

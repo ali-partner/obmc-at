@@ -1,0 +1,20 @@
+[Unit]
+Description=Thermal plan - Fan control
+After=init-platform.service
+
+[Service]
+ExecStart=/usr/bin/mac_temp_monitord
+Type=simple
+StandardOutput=journal
+StandardError=journal
+TTYPath=/dev/ttyS0
+SyslogIdentifier=fan-ctrl
+
+[Install]
+WantedBy=multi-user.target
+
+
+
+
+
+

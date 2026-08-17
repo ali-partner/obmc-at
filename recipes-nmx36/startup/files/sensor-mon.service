@@ -1,0 +1,13 @@
+[Unit]
+Description=Initiate Procuct Sensor Mon
+#Requires=init-platform.service
+After=init-platform.service
+
+[Service]
+ExecStart=/usr/bin/env sensor-mon.sh
+SyslogIdentifier=sensor-mon.sh
+Restart=on-failure
+RestartSec=30s
+
+[Install]
+WantedBy=multi-user.target

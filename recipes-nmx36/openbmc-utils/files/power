@@ -1,0 +1,43 @@
+#!/bin/bash
+
+
+. /usr/local/bin/openbmc-utils.sh
+prog="$0"
+usage() {
+    echo "Usage: $prog cpu <command> "
+    echo
+    echo "Commands:"
+    echo "  status: Get the current power status of CPU/ASIC/transceiver"
+    echo
+    echo "  on: Power on the CPU/ASIC/transceiver"
+    echo
+    echo "  off: Power off the CPU/ASIC/transceiver"
+    echo
+    echo "  cycle: Power cycle the CPU/ASIC/transceiver"
+    echo
+}
+if [ "$1" != "cpu" ] || [ $# -ne 2 ]; then
+    usage
+	exit -1
+fi
+shift
+command="$1"
+case "$command" in
+    status)
+        power.sh status 
+        ;;
+    on)
+        power.sh on
+        ;;
+    off)
+	    power.sh off
+		;;
+    cycle)
+        power.sh cpu_pwr_cycle
+        ;;
+    *)
+        usage
+        exit -1
+        ;;
+esac
+exit $?

@@ -1,0 +1,382 @@
+{
+    "TEMPERATURE_SENSORS": {
+        "CPU_TEMP": {
+            "Name": "CPU_TEMP",
+            "Descr": "CPU TEMP"
+        },
+        "SWITCH_TEMP": {
+            "Name": "SWITCH_TEMP",
+            "Descr": "SWITCH TEMP"
+        },
+        "INLET_TEMP": {
+            "Name": "INLET_TEMP",
+            "Descr": "PSU Inlet TEMP Sensor"
+        }
+    },
+    "DCDC_SENSORS": {
+        "GRR_PVCCIN_V": {
+            "Name": "GRR_PVCCIN_V",
+            "Descr": "GRR_PVCCIN_V"
+        },
+        "GRR_PVNN_V": {
+            "Name": "GRR_PVNN_V",
+            "Descr": "GRR_PVNN_V"
+        },
+        "GRR_PVCCIN_C": {
+            "Name": "GRR_PVCCIN_C",
+            "Descr": "GRR_PVCCIN_C"
+        },
+        "GRR_PVNN_C": {
+            "Name": "GRR_PVNN_C",
+            "Descr": "GRR_PVNN_C"
+        },
+        "GRR_P1V1_V": {
+            "Name": "GRR_P1V1_V",
+            "Descr": "GRR_P1V1_V"
+        },
+        "GRR_PVNN_PCH_V": {
+            "Name": "GRR_PVNN_PCH_V",
+            "Descr": "GRR_PVNN_PCH_V"
+        },
+        "GRR_PVNN_PCH_C": {
+            "Name": "GRR_PVNN_PCH_C",
+            "Descr": "GRR_PVNN_PCH_C"
+        },
+        "GRR_P0V9_V": {
+            "Name": "GRR_P0V9_V",
+            "Descr": "GRR_P0V9_V"
+        },
+        "GRR_PVCCINF_V": {
+            "Name": "GRR_PVCCINF_V",
+            "Descr": "GRR_PVCCINF_V"
+        },
+        "GRR_P0V9_C": {
+            "Name": "GRR_P0V9_C",
+            "Descr": "GRR_P0V9_C"
+        },
+        "GRR_PVCCINF_C": {
+            "Name": "GRR_PVCCINF_C",
+            "Descr": "GRR_PVCCINF_C"
+        },
+        "GRR_P5V_DDR_V": {
+            "Name": "GRR_P5V_DDR_V",
+            "Descr": "GRR_P5V_DDR_V"
+        },
+        "GRR_P5V_DDR_C": {
+            "Name": "GRR_P5V_DDR_C",
+            "Descr": "GRR_P5V_DDR_C"
+        },
+        "SP6_AVDD_T0_1V05_V": {
+            "Name": "SP6_AVDD_T0_1V05_V",
+            "Descr": "SP6_AVDD_T0_1V05_V"
+        },
+        "SP6_AVDD_T1_1V05_V": {
+            "Name": "SP6_AVDD_T1_1V05_V",
+            "Descr": "SP6_AVDD_T1_1V05_V"
+        },
+        "SP6_AVDD_T0_1V05_C": {
+            "Name": "SP6_AVDD_T0_1V05_C",
+            "Descr": "SP6_AVDD_T0_1V05_C"
+        },
+        "SP6_AVDD_T1_1V05_C": {
+            "Name": "SP6_AVDD_T1_1V05_C",
+            "Descr": "SP6_AVDD_T1_1V05_C"
+        },
+        "SP6_AVDD_T2_1V05_V": {
+            "Name": "SP6_AVDD_T2_1V05_V",
+            "Descr": "SP6_AVDD_T2_1V05_V"
+        },
+        "SP6_AVDD_T3_1V05_V": {
+            "Name": "SP6_AVDD_T3_1V05_V",
+            "Descr": "SP6_AVDD_T3_1V05_V"
+        },
+        "SP6_AVDD_T2_1V05_C": {
+            "Name": "SP6_AVDD_T2_1V05_C",
+            "Descr": "SP6_AVDD_T2_1V05_C"
+        },
+        "SP6_AVDD_T3_1V05_C": {
+            "Name": "SP6_AVDD_T3_1V05_C",
+            "Descr": "SP6_AVDD_T3_1V05_C"
+        },
+        "SP6_AVDD_T4_1V05_V": {
+            "Name": "SP6_AVDD_T4_1V05_V",
+            "Descr": "SP6_AVDD_T4_1V05_V"
+        },
+        "SP6_AVDD_T5_1V05_V": {
+            "Name": "SP6_AVDD_T5_1V05_V",
+            "Descr": "SP6_AVDD_T5_1V05_V"
+        },
+        "SP6_AVDD_T4_1V05_C": {
+            "Name": "SP6_AVDD_T4_1V05_C",
+            "Descr": "SP6_AVDD_T4_1V05_C"
+        },
+        "SP6_AVDD_T5_1V05_C": {
+            "Name": "SP6_AVDD_T5_1V05_C",
+            "Descr": "SP6_AVDD_T5_1V05_C"
+        },
+        "SP6_AVDD_T6_1V05_V": {
+            "Name": "SP6_AVDD_T6_1V05_V",
+            "Descr": "SP6_AVDD_T6_1V05_V"
+        },
+        "SP6_AVDD_T7_1V05_V": {
+            "Name": "SP6_AVDD_T7_1V05_V",
+            "Descr": "SP6_AVDD_T7_1V05_V"
+        },
+        "SP6_AVDD_T6_1V05_C": {
+            "Name": "SP6_AVDD_T6_1V05_C",
+            "Descr": "SP6_AVDD_T6_1V05_C"
+        },
+        "SP6_AVDD_T7_1V05_C": {
+            "Name": "SP6_AVDD_T7_1V05_C",
+            "Descr": "SP6_AVDD_T7_1V05_C"
+        },
+        "SP6_HVDD_T03_1V2_V": {
+            "Name": "SP6_HVDD_T03_1V2_V",
+            "Descr": "SP6_HVDD_T03_1V2_V"
+        },
+        "SP6_HVDD_T47_1V2_V": {
+            "Name": "SP6_HVDD_T47_1V2_V",
+            "Descr": "SP6_HVDD_T47_1V2_V"
+        },
+        "SP6_HVDD_T03_1V2_C": {
+            "Name": "SP6_HVDD_T03_1V2_C",
+            "Descr": "SP6_HVDD_T03_1V2_C"
+        },
+        "SP6_HVDD_T47_1V2_C": {
+            "Name": "SP6_HVDD_T47_1V2_C",
+            "Descr": "SP6_HVDD_T47_1V2_C"
+        },
+        "SP6_VDDHBID_T12_0V78_V": {
+            "Name": "SP6_VDDHBID_T12_0V78_V",
+            "Descr": "SP6_VDDHBID_T12_0V78_V"
+        },
+        "SP6_VDDHBID_T37_0V78_V": {
+            "Name": "SP6_VDDHBID_T37_0V78_V",
+            "Descr": "SP6_VDDHBID_T37_0V78_V"
+        },
+        "SP6_VDDHBID_T12_0V78_C": {
+            "Name": "SP6_VDDHBID_T12_0V78_C",
+            "Descr": "SP6_VDDHBID_T12_0V78_C"
+        },
+        "SP6_VDDHBID_T37_0V78_C": {
+            "Name": "SP6_VDDHBID_T37_0V78_C",
+            "Descr": "SP6_VDDHBID_T37_0V78_C"
+        },
+        "SP6_VDDHBID_T04_0V78_V": {
+            "Name": "SP6_VDDHBID_T04_0V78_V",
+            "Descr": "SP6_VDDHBID_T04_0V78_V"
+        },
+        "SP6_VDDHBID_T56_0V78_V": {
+            "Name": "SP6_VDDHBID_T56_0V78_V",
+            "Descr": "SP6_VDDHBID_T56_0V78_V"
+        },
+        "SP6_VDDHBID_T04_0V78_C": {
+            "Name": "SP6_VDDHBID_T04_0V78_C",
+            "Descr": "SP6_VDDHBID_T04_0V78_C"
+        },
+        "SP6_VDDHBID_T56_0V78_C": {
+            "Name": "SP6_VDDHBID_T56_0V78_C",
+            "Descr": "SP6_VDDHBID_T56_0V78_C"
+        },
+        "OSFP_1_8_3V3_V": {
+            "Name": "OSFP_1_8_3V3_V",
+            "Descr": "OSFP_1_8_3V3_V"
+        },
+        "OSFP9_16_3V3_V": {
+            "Name": "OSFP9_16_3V3_V",
+            "Descr": "OSFP9_16_3V3_V"
+        },
+        "OSFP_1_8_3V3_C": {
+            "Name": "OSFP_1_8_3V3_C",
+            "Descr": "OSFP_1_8_3V3_C"
+        },
+        "OSFP9_16_3V3_C": {
+            "Name": "OSFP9_16_3V3_C",
+            "Descr": "OSFP9_16_3V3_C"
+        },
+        "OSFP17_24_3V3_V": {
+            "Name": "OSFP17_24_3V3_V",
+            "Descr": "OSFP17_24_3V3_V"
+        },
+        "OSFP25_32_3V3_V": {
+            "Name": "OSFP25_32_3V3_V",
+            "Descr": "OSFP25_32_3V3_V"
+        },
+        "OSFP17_24_3V3_C": {
+            "Name": "OSFP17_24_3V3_C",
+            "Descr": "OSFP17_24_3V3_C"
+        },
+        "OSFP25_32_3V3_C": {
+            "Name": "OSFP25_32_3V3_C",
+            "Descr": "OSFP25_32_3V3_C"
+        },
+        "OSFP33_40_3V3_V": {
+            "Name": "OSFP33_40_3V3_V",
+            "Descr": "OSFP33_40_3V3_V"
+        },
+        "OSFP41_48_3V3_V": {
+            "Name": "OSFP41_48_3V3_V",
+            "Descr": "OSFP41_48_3V3_V"
+        },
+        "OSFP33_40_3V3_C": {
+            "Name": "OSFP33_40_3V3_C",
+            "Descr": "OSFP33_40_3V3_C"
+        },
+        "OSFP41_48_3V3_C": {
+            "Name": "OSFP41_48_3V3_C",
+            "Descr": "OSFP41_48_3V3_C"
+        },
+        "OSFP49_56_3V3_V": {
+            "Name": "OSFP49_56_3V3_V",
+            "Descr": "OSFP49_56_3V3_V"
+        },
+        "OSFP57_64_3V3_V": {
+            "Name": "OSFP57_64_3V3_V",
+            "Descr": "OSFP57_64_3V3_V"
+        },
+        "OSFP49_56_3V3_C": {
+            "Name": "OSFP49_56_3V3_C",
+            "Descr": "OSFP49_56_3V3_C"
+        },
+        "OSFP57_64_3V3_C": {
+            "Name": "OSFP57_64_3V3_C",
+            "Descr": "OSFP57_64_3V3_C"
+        },
+        "SP6_VDD_T0_0V75_V": {
+            "Name": "SP6_VDD_T0_0V75_V",
+            "Descr": "SP6_VDD_T0_0V75_V"
+        },
+        "SP6_VDD_T1_0V75_V": {
+            "Name": "SP6_VDD_T1_0V75_V",
+            "Descr": "SP6_VDD_T1_0V75_V"
+        },
+        "SP6_VDD_T0_0V75_C": {
+            "Name": "SP6_VDD_T0_0V75_C",
+            "Descr": "SP6_VDD_T0_0V75_C"
+        },
+        "SP6_VDD_T1_0V75_C": {
+            "Name": "SP6_VDD_T1_0V75_C",
+            "Descr": "SP6_VDD_T1_0V75_C"
+        },
+        "SP6_VDD_T2_0V75_V": {
+            "Name": "SP6_VDD_T2_0V75_V",
+            "Descr": "SP6_VDD_T2_0V75_V"
+        },
+        "SP6_VDD_T3_0V75_V": {
+            "Name": "SP6_VDD_T3_0V75_V",
+            "Descr": "SP6_VDD_T3_0V75_V"
+        },
+        "SP6_VDD_T2_0V75_C": {
+            "Name": "SP6_VDD_T2_0V75_C",
+            "Descr": "SP6_VDD_T2_0V75_C"
+        },
+        "SP6_VDD_T3_0V75_C": {
+            "Name": "SP6_VDD_T3_0V75_C",
+            "Descr": "SP6_VDD_T3_0V75_C"
+        },
+        "SP6_VDD_T4_0V75_V": {
+            "Name": "SP6_VDD_T4_0V75_V",
+            "Descr": "SP6_VDD_T4_0V75_V"
+        },
+        "SP6_VDD_T5_0V75_V": {
+            "Name": "SP6_VDD_T5_0V75_V",
+            "Descr": "SP6_VDD_T5_0V75_V"
+        },
+        "SP6_VDD_T4_0V75_C": {
+            "Name": "SP6_VDD_T4_0V75_C",
+            "Descr": "SP6_VDD_T4_0V75_C"
+        },
+        "SP6_VDD_T5_0V75_C": {
+            "Name": "SP6_VDD_T5_0V75_C",
+            "Descr": "SP6_VDD_T5_0V75_C"
+        },
+        "SP6_VDD_T6_0V75_V": {
+            "Name": "SP6_VDD_T6_0V75_V",
+            "Descr": "SP6_VDD_T6_0V75_V"
+        },
+        "SP6_VDD_T7_0V75_V": {
+            "Name": "SP6_VDD_T7_0V75_V",
+            "Descr": "SP6_VDD_T7_0V75_V"
+        },
+        "SP6_VDD_T6_0V75_C": {
+            "Name": "SP6_VDD_T6_0V75_C",
+            "Descr": "SP6_VDD_T6_0V75_C"
+        },
+        "SP6_VDD_T7_0V75_C": {
+            "Name": "SP6_VDD_T7_0V75_C",
+            "Descr": "SP6_VDD_T7_0V75_C"
+        },
+        "SP6_VDDM_0V75_V": {
+            "Name": "SP6_VDDM_0V75_V",
+            "Descr": "SP6_VDDM_0V75_V"
+        },
+        "SP6_VDDM_0V75_C": {
+            "Name": "SP6_VDDM_0V75_C",
+            "Descr": "SP6_VDDM_0V75_C"
+        },
+        "SP6_DVDD_T0_0V7_V": {
+            "Name": "SP6_DVDD_T0_0V7_V",
+            "Descr": "SP6_DVDD_T0_0V7_V"
+        },
+        "SP6_DVDD_T1_0V7_V": {
+            "Name": "SP6_DVDD_T1_0V7_V",
+            "Descr": "SP6_DVDD_T1_0V7_V"
+        },
+        "SP6_DVDD_T0_0V7_C": {
+            "Name": "SP6_DVDD_T0_0V7_C",
+            "Descr": "SP6_DVDD_T0_0V7_C"
+        },
+        "SP6_DVDD_T1_0V7_C": {
+            "Name": "SP6_DVDD_T1_0V7_C",
+            "Descr": "SP6_DVDD_T1_0V7_C"
+        },
+        "SP6_DVDD_T2_0V7_V": {
+            "Name": "SP6_DVDD_T2_0V7_V",
+            "Descr": "SP6_DVDD_T2_0V7_V"
+        },
+        "SP6_DVDD_T3_0V7_V": {
+            "Name": "SP6_DVDD_T3_0V7_V",
+            "Descr": "SP6_DVDD_T3_0V7_V"
+        },
+        "SP6_DVDD_T2_0V7_C": {
+            "Name": "SP6_DVDD_T2_0V7_C",
+            "Descr": "SP6_DVDD_T2_0V7_C"
+        },
+        "SP6_DVDD_T3_0V7_C": {
+            "Name": "SP6_DVDD_T3_0V7_C",
+            "Descr": "SP6_DVDD_T3_0V7_C"
+        },
+        "SP6_DVDD_T4_0V7_V": {
+            "Name": "SP6_DVDD_T4_0V7_V",
+            "Descr": "SP6_DVDD_T4_0V7_V"
+        },
+        "SP6_DVDD_T5_0V7_V": {
+            "Name": "SP6_DVDD_T5_0V7_V",
+            "Descr": "SP6_DVDD_T5_0V7_V"
+        },
+        "SP6_DVDD_T4_0V7_C": {
+            "Name": "SP6_DVDD_T4_0V7_C",
+            "Descr": "SP6_DVDD_T4_0V7_C"
+        },
+        "SP6_DVDD_T5_0V7_C": {
+            "Name": "SP6_DVDD_T5_0V7_C",
+            "Descr": "SP6_DVDD_T5_0V7_C"
+        },
+        "SP6_DVDD_T6_0V7_V": {
+            "Name": "SP6_DVDD_T6_0V7_V",
+            "Descr": "SP6_DVDD_T6_0V7_V"
+        },
+        "SP6_DVDD_T7_0V7_V": {
+            "Name": "SP6_DVDD_T7_0V7_V",
+            "Descr": "SP6_DVDD_T7_0V7_V"
+        },
+        "SP6_DVDD_T6_0V7_C": {
+            "Name": "SP6_DVDD_T6_0V7_C",
+            "Descr": "SP6_DVDD_T6_0V7_C"
+        },
+        "SP6_DVDD_T7_0V7_C": {
+            "Name": "SP6_DVDD_T7_0V7_C",
+            "Descr": "SP6_DVDD_T7_0V7_C"
+        }
+    }
+}

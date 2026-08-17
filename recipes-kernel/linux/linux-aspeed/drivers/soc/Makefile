@@ -1,0 +1,13 @@
+# SPDX-License-Identifier: GPL-2.0-only
+obj-$(CONFIG_ASPEED_LPC_CTRL)		+= aspeed-lpc-ctrl.o
+obj-$(CONFIG_ASPEED_LPC_SNOOP)		+= aspeed-lpc-snoop.o
+obj-$(CONFIG_ASPEED_UART_ROUTING)	+= aspeed-uart-routing.o
+obj-$(CONFIG_ASPEED_OTP)		+= ast2600-otp.o
+obj-$(CONFIG_ASPEED_P2A_CTRL)		+= aspeed-p2a-ctrl.o
+obj-$(CONFIG_ASPEED_SOCINFO)		+= aspeed-socinfo.o
+obj-$(CONFIG_ASPEED_SBC)		+= aspeed-sbc.o
+obj-$(CONFIG_ASPEED_XDMA)		+= aspeed-xdma.o
+obj-$(CONFIG_AST2700_OTP)		+= ast2700-otp.o
+obj-$(CONFIG_ASPEED_PCIE_MMBI)		+= aspeed-pcie-mmbi.o
+obj-$(CONFIG_ASPEED_BMC_DEV)		+= aspeed-bmc-dev.o
+obj-$(CONFIG_ARCH_ASPEED)           += aspeed-usb-hp.o

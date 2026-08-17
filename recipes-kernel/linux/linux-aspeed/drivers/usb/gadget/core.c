@@ -1,0 +1,684 @@
+// SPDX-License-Identifier: GPL-2.0+
+/*
+ * aspeed-vhub -- Driver for Aspeed SoC "vHub" USB gadget
+ *
+ * core.c - Top level support
+ *
+ * Copyright 2017 IBM Corporation
+ */
+
+#include <linux/kernel.h>
+#include <linux/module.h>
+#include <linux/platform_device.h>
+#include <linux/delay.h>
+#include <linux/ioport.h>
+#include <linux/slab.h>
+#include <linux/errno.h>
+#include <linux/list.h>
+#include <linux/interrupt.h>
+#include <linux/proc_fs.h>
+#include <linux/prefetch.h>
+#include <linux/clk.h>
+#include <linux/usb/gadget.h>
+#include <linux/of.h>
+#include <linux/regmap.h>
+#include <linux/dma-mapping.h>
+#include <linux/reset.h>
+#include <linux/mfd/syscon.h>
+
+#include "vhub.h"
+
+#define ASPEED_G7_SCU_VHUB_USB_FUNC_OFFSET	0x410
+
+enum ast_g7_pcie {
+	NOT_SUPPORTED,
+	PCIE_EHCI,
+	PCIE_XHCI,
+};
+
+struct ast_vhub_match_data {
+	enum ast_g7_pcie g7_pcie;
+	u32 usb_mode_mask;
+	u32 xhci_mode_mask;
+	u32 txfifo_fix_reg;
+	u32 txfifo_fix_val;
+};
+
+void ast_vhub_done(struct ast_vhub_ep *ep, struct ast_vhub_req *req,
+		   int status)
+{
+	bool internal = req->internal;
+	struct ast_vhub *vhub = ep->vhub;
+
+	EPVDBG(ep, "completing request @%p, status %d\n", req, status);
+
+	list_del_init(&req->queue);
+
+	if ((req->req.status == -EINPROGRESS) ||  (status == -EOVERFLOW))
+		req->req.status = status;
+
+	if (req->req.dma) {
+		if (!WARN_ON(!ep->dev))
+			usb_gadget_unmap_request_by_dev(&vhub->pdev->dev,
+						 &req->req, ep->epn.is_in);
+		req->req.dma = 0;
+	}
+
+	/*
+	 * If this isn't an internal EP0 request, call the core
+	 * to call the gadget completion.
+	 */
+	if (!internal) {
+		spin_unlock(&ep->vhub->lock);
+		usb_gadget_giveback_request(&ep->ep, &req->req);
+		spin_lock(&ep->vhub->lock);
+	}
+}
+
+void ast_vhub_nuke(struct ast_vhub_ep *ep, int status)
+{
+	struct ast_vhub_req *req;
+	int count = 0;
+
+	/* Beware, lock will be dropped & req-acquired by done() */
+	while (!list_empty(&ep->queue)) {
+		req = list_first_entry(&ep->queue, struct ast_vhub_req, queue);
+		ast_vhub_done(ep, req, status);
+		count++;
+	}
+	if (count)
+		EPDBG(ep, "Nuked %d request(s)\n", count);
+}
+
+struct usb_request *ast_vhub_alloc_request(struct usb_ep *u_ep,
+					   gfp_t gfp_flags)
+{
+	struct ast_vhub_req *req;
+
+	req = kzalloc(sizeof(*req), gfp_flags);
+	if (!req)
+		return NULL;
+	return &req->req;
+}
+
+void ast_vhub_free_request(struct usb_ep *u_ep, struct usb_request *u_req)
+{
+	struct ast_vhub_req *req = to_ast_req(u_req);
+
+	kfree(req);
+}
+
+static irqreturn_t ast_vhub_irq(int irq, void *data)
+{
+	struct ast_vhub *vhub = data;
+	irqreturn_t iret = IRQ_NONE;
+	u32 i, istat;
+
+	/* Stale interrupt while tearing down */
+	if (!vhub->ep0_bufs)
+		return IRQ_NONE;
+
+	spin_lock(&vhub->lock);
+
+	/* Read and ACK interrupts */
+	istat = readl(vhub->regs + AST_VHUB_ISR);
+	if (!istat)
+		goto bail;
+	writel(istat, vhub->regs + AST_VHUB_ISR);
+	iret = IRQ_HANDLED;
+
+	UDCVDBG(vhub, "irq status=%08x, ep_acks=%08x ep_nacks=%08x\n",
+	       istat,
+	       readl(vhub->regs + AST_VHUB_EP_ACK_ISR),
+	       readl(vhub->regs + AST_VHUB_EP_NACK_ISR));
+
+	/* Handle generic EPs first */
+	if (istat & VHUB_IRQ_EP_POOL_ACK_STALL) {
+		u32 ep_acks = readl(vhub->regs + AST_VHUB_EP_ACK_ISR);
+		writel(ep_acks, vhub->regs + AST_VHUB_EP_ACK_ISR);
+
+		for (i = 0; ep_acks && i < vhub->max_epns; i++) {
+			u32 mask = VHUB_EP_IRQ(i);
+			if (ep_acks & mask) {
+				ast_vhub_epn_ack_irq(&vhub->epns[i]);
+				ep_acks &= ~mask;
+			}
+		}
+	}
+
+	/* Handle device interrupts */
+	if (istat & vhub->port_irq_mask) {
+		for (i = 0; i < vhub->max_ports; i++) {
+			if (istat & VHUB_DEV_IRQ(i))
+				ast_vhub_dev_irq(&vhub->ports[i].dev);
+		}
+	}
+
+	/* Handle top-level vHub EP0 interrupts */
+	if (istat & (VHUB_IRQ_HUB_EP0_OUT_ACK_STALL |
+		     VHUB_IRQ_HUB_EP0_IN_ACK_STALL |
+		     VHUB_IRQ_HUB_EP0_SETUP)) {
+		if (istat & VHUB_IRQ_HUB_EP0_IN_ACK_STALL)
+			ast_vhub_ep0_handle_ack(&vhub->ep0, true);
+		if (istat & VHUB_IRQ_HUB_EP0_OUT_ACK_STALL)
+			ast_vhub_ep0_handle_ack(&vhub->ep0, false);
+		if (istat & VHUB_IRQ_HUB_EP0_SETUP)
+			ast_vhub_ep0_handle_setup(&vhub->ep0);
+	}
+
+	/* Various top level bus events */
+	if (istat & (VHUB_IRQ_BUS_RESUME |
+		     VHUB_IRQ_BUS_SUSPEND |
+		     VHUB_IRQ_BUS_RESET)) {
+		if (istat & VHUB_IRQ_BUS_RESUME)
+			ast_vhub_hub_resume(vhub);
+		if (istat & VHUB_IRQ_BUS_SUSPEND)
+			ast_vhub_hub_suspend(vhub);
+		if (istat & VHUB_IRQ_BUS_RESET)
+			ast_vhub_hub_reset(vhub);
+	}
+
+ bail:
+	spin_unlock(&vhub->lock);
+	return iret;
+}
+
+void ast_vhub_init_hw(struct ast_vhub *vhub)
+{
+	u32 ctrl, port_mask, epn_mask;
+
+	UDCDBG(vhub,"(Re)Starting HW ...\n");
+
+	/* Enable PHY */
+	ctrl = VHUB_CTRL_PHY_CLK |
+		VHUB_CTRL_PHY_RESET_DIS;
+
+       /*
+	* We do *NOT* set the VHUB_CTRL_CLK_STOP_SUSPEND bit
+	* to stop the logic clock during suspend because
+	* it causes the registers to become inaccessible and
+	* we haven't yet figured out a good wayt to bring the
+	* controller back into life to issue a wakeup.
+	*/
+
+	/*
+	 * Set some ISO & split control bits according to Aspeed
+	 * recommendation
+	 *
+	 * VHUB_CTRL_ISO_RSP_CTRL: When set tells the HW to respond
+	 * with 0 bytes data packet to ISO IN endpoints when no data
+	 * is available.
+	 *
+	 * VHUB_CTRL_SPLIT_IN: This makes a SOF complete a split IN
+	 * transaction.
+	 */
+	ctrl |= VHUB_CTRL_ISO_RSP_CTRL | VHUB_CTRL_SPLIT_IN;
+	writel(ctrl, vhub->regs + AST_VHUB_CTRL);
+	udelay(1);
+
+	/* Set descriptor ring size */
+	if (AST_VHUB_DESCS_COUNT == 256) {
+		ctrl |= VHUB_CTRL_LONG_DESC;
+		writel(ctrl, vhub->regs + AST_VHUB_CTRL);
+	} else {
+		BUILD_BUG_ON(AST_VHUB_DESCS_COUNT != 32);
+	}
+
+	/* Reset all devices */
+	port_mask = GENMASK(vhub->max_ports, 1);
+	writel(VHUB_SW_RESET_ROOT_HUB |
+	       VHUB_SW_RESET_DMA_CONTROLLER |
+	       VHUB_SW_RESET_EP_POOL |
+	       port_mask, vhub->regs + AST_VHUB_SW_RESET);
+	udelay(1);
+	writel(0, vhub->regs + AST_VHUB_SW_RESET);
+
+	/* Disable and cleanup EP ACK/NACK interrupts */
+	epn_mask = GENMASK(vhub->max_epns - 1, 0);
+	writel(0, vhub->regs + AST_VHUB_EP_ACK_IER);
+	writel(0, vhub->regs + AST_VHUB_EP_NACK_IER);
+	writel(epn_mask, vhub->regs + AST_VHUB_EP_ACK_ISR);
+	writel(epn_mask, vhub->regs + AST_VHUB_EP_NACK_ISR);
+
+	/* Default settings for EP0, enable HW hub EP1 */
+	writel(0, vhub->regs + AST_VHUB_EP0_CTRL);
+	writel(VHUB_EP1_CTRL_RESET_TOGGLE |
+	       VHUB_EP1_CTRL_ENABLE,
+	       vhub->regs + AST_VHUB_EP1_CTRL);
+	writel(0, vhub->regs + AST_VHUB_EP1_STS_CHG);
+
+	/* Configure EP0 DMA buffer */
+	writel(vhub->ep0.buf_dma, vhub->regs + AST_VHUB_EP0_DATA);
+
+	/* Clear address */
+	writel(0, vhub->regs + AST_VHUB_CONF);
+
+	/* Pullup hub (activate on host) */
+	if (vhub->force_usb1)
+		ctrl |= VHUB_CTRL_FULL_SPEED_ONLY;
+
+	/* Enlarge FIFO for ast2700 soc0 vhub1 */
+	if (vhub->enlarge_fifo)
+		ctrl |= VHUB_CTRL_ENLARGE_FIFO;
+
+	ctrl |= VHUB_CTRL_AUTO_REMOTE_WAKEUP;
+	ctrl |= VHUB_CTRL_UPSTREAM_CONNECT;
+	writel(ctrl, vhub->regs + AST_VHUB_CTRL);
+
+	/* Enable some interrupts */
+	writel(VHUB_IRQ_HUB_EP0_IN_ACK_STALL |
+	       VHUB_IRQ_HUB_EP0_OUT_ACK_STALL |
+	       VHUB_IRQ_HUB_EP0_SETUP |
+	       VHUB_IRQ_EP_POOL_ACK_STALL |
+	       VHUB_IRQ_BUS_RESUME |
+	       VHUB_IRQ_BUS_SUSPEND |
+	       VHUB_IRQ_BUS_RESET,
+	       vhub->regs + AST_VHUB_IER);
+}
+
+static int ast_vhub_init_pcie(struct ast_vhub *vhub, const struct ast_vhub_match_data *pdata)
+{
+	struct device *dev = &vhub->pdev->dev;
+	struct regmap *pcie_device;
+	struct regmap *scu;
+	u32 scu_usb;
+	int rc = 0;
+
+	scu = syscon_regmap_lookup_by_phandle(dev->of_node, "aspeed,scu");
+	if (IS_ERR(scu)) {
+		dev_err(dev, "failed to find SCU regmap\n");
+		return PTR_ERR(scu);
+	}
+
+	regmap_read(scu, ASPEED_G7_SCU_VHUB_USB_FUNC_OFFSET, &scu_usb);
+
+	/* Check EHCI or xHCI to virtual hub */
+	if ((scu_usb & pdata->usb_mode_mask) == 0) {
+		pcie_device = syscon_regmap_lookup_by_phandle(dev->of_node,
+							      "aspeed,device");
+		if (IS_ERR(pcie_device)) {
+			dev_err(dev, "failed to find PCIe device regmap\n");
+			return PTR_ERR(pcie_device);
+		}
+		if (pdata->g7_pcie == PCIE_XHCI) {
+			/* Check PCIe xHCI or BMC xHCI to virtual hub */
+			if ((scu_usb & pdata->xhci_mode_mask) == 0) {
+				dev_info(dev, "PCIe xHCI to vhub\n");
+				//EnPCIaMSI_EnPCIaIntA_EnPCIaMst_EnPCIaDev
+				/* Turn on PCIe xHCI without MSI */
+				regmap_update_bits(pcie_device, 0x70,
+						   BIT(19) | BIT(11) | BIT(3),
+						   BIT(19) | BIT(11) | BIT(3));
+			}
+		} else if (pdata->g7_pcie == PCIE_EHCI) {
+			dev_info(dev, "PCIe EHCI to vhub\n");
+			//EnPCIaMSI_EnPCIaIntA_EnPCIaMst_EnPCIaDev
+			/* Turn on PCIe EHCI without MSI */
+			regmap_update_bits(pcie_device, 0x70,
+					   BIT(18) | BIT(10) | BIT(2),
+					   BIT(18) | BIT(10) | BIT(2));
+		}
+	}
+	return rc;
+}
+
+static void ast_vhub_remove(struct platform_device *pdev)
+{
+	struct ast_vhub *vhub = platform_get_drvdata(pdev);
+	unsigned long flags;
+	int i;
+
+	if (!vhub || !vhub->regs)
+		return;
+
+	/* Remove devices */
+	for (i = 0; i < vhub->max_ports; i++)
+		ast_vhub_del_dev(&vhub->ports[i].dev);
+
+	spin_lock_irqsave(&vhub->lock, flags);
+
+	/* Mask & ack all interrupts  */
+	writel(0, vhub->regs + AST_VHUB_IER);
+	writel(VHUB_IRQ_ACK_ALL, vhub->regs + AST_VHUB_ISR);
+
+	/* Pull device, leave PHY enabled */
+	writel(VHUB_CTRL_PHY_CLK |
+	       VHUB_CTRL_PHY_RESET_DIS,
+	       vhub->regs + AST_VHUB_CTRL);
+
+	if (vhub->clk)
+		clk_disable_unprepare(vhub->clk);
+
+	if (vhub->rst)
+		reset_control_assert(vhub->rst);
+
+	spin_unlock_irqrestore(&vhub->lock, flags);
+
+	if (vhub->ep0_bufs)
+		dma_free_coherent(&pdev->dev,
+				  AST_VHUB_EP0_MAX_PACKET *
+				  (vhub->max_ports + 1),
+				  vhub->ep0_bufs,
+				  vhub->ep0_bufs_dma);
+	vhub->ep0_bufs = NULL;
+}
+
+static int ast_vhub_init_uart(struct device *dev, struct ast_vhub *vhub)
+{
+	const struct device_node *np = dev->of_node;
+	void __iomem *regs = vhub->regs + 0x800;
+	int i, rc = 0;
+	int num_ports;
+	u32 ports[AST_VHUB_NUM_UART_PORTS], port;
+	u32 mode_sel = 0, dev_en = 0;
+
+	num_ports = of_property_count_u32_elems(np, "aspeed,uart-ports");
+	if (num_ports == -EINVAL) {
+		/* Property not found */
+		return 0;
+	}
+	if (num_ports < 0) {
+		dev_err(dev, "Failed to read uart-ports property\n");
+		return num_ports;
+	}
+	if (num_ports > AST_VHUB_NUM_UART_PORTS) {
+		dev_warn(dev, "Too many UART ports (%d), max is %d\n",
+			 num_ports, AST_VHUB_NUM_UART_PORTS);
+		num_ports = AST_VHUB_NUM_UART_PORTS;
+	}
+
+	rc = of_property_read_u32_array(np, "aspeed,uart-ports",
+					ports, num_ports);
+	if (rc)
+		return rc;
+
+	dev_en = readl(regs + AST_VHUB_COM_EN_CTRL);
+
+	for (i = 0; i < num_ports; i++) {
+		// io-die uart only
+		if (ports[i] == 4 || ports[i] > AST_VHUB_NUM_UART_PORTS) {
+			dev_warn(dev, "Ignoring invalid UART port %d\n",
+				 ports[i]);
+			continue;
+		}
+
+		if (ports[i] < 4)
+			port = ports[i];
+		else
+			port = ports[i] - 1;
+
+		mode_sel |= (0x2 << (port * 2));
+		dev_en |= BIT(port + 16);
+	}
+
+	dev_info(dev, "Enabled UART ports\n");
+
+	writel(mode_sel, regs + AST_VHUB_COM_MODE_SEL);
+	writel(dev_en, regs + AST_VHUB_COM_EN_CTRL);
+	return 0;
+}
+
+static int ast_vhub_probe(struct platform_device *pdev)
+{
+	enum usb_device_speed max_speed;
+	struct ast_vhub *vhub;
+	struct resource *res;
+	int i, rc = 0;
+	const struct device_node *np = pdev->dev.of_node;
+	const struct ast_vhub_match_data *pdata;
+	u32 val;
+
+	vhub = devm_kzalloc(&pdev->dev, sizeof(*vhub), GFP_KERNEL);
+	if (!vhub)
+		return -ENOMEM;
+
+	pdata = of_device_get_match_data(&pdev->dev);
+	if (IS_ERR(pdata)) {
+		dev_err(&pdev->dev, "Couldn't get match data\n");
+		return -ENODEV;
+	}
+
+	rc = of_property_read_u32(np, "aspeed,vhub-downstream-ports",
+				  &vhub->max_ports);
+	if (rc < 0)
+		vhub->max_ports = AST_VHUB_NUM_PORTS;
+
+	vhub->ports = devm_kcalloc(&pdev->dev, vhub->max_ports,
+				   sizeof(*vhub->ports), GFP_KERNEL);
+	if (!vhub->ports)
+		return -ENOMEM;
+
+	rc = of_property_read_u32(np, "aspeed,vhub-generic-endpoints",
+				  &vhub->max_epns);
+	if (rc < 0)
+		vhub->max_epns = AST_VHUB_NUM_GEN_EPs;
+
+	vhub->epns = devm_kcalloc(&pdev->dev, vhub->max_epns,
+				  sizeof(*vhub->epns), GFP_KERNEL);
+	if (!vhub->epns)
+		return -ENOMEM;
+
+	vhub->enlarge_fifo = of_property_read_bool(np, "aspeed,enlarge-fifo");
+
+	spin_lock_init(&vhub->lock);
+	vhub->pdev = pdev;
+	vhub->port_irq_mask = GENMASK(VHUB_IRQ_DEV1_BIT + vhub->max_ports - 1,
+				      VHUB_IRQ_DEV1_BIT);
+
+	vhub->regs = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
+	if (IS_ERR(vhub->regs)) {
+		dev_err(&pdev->dev, "Failed to map resources\n");
+		return PTR_ERR(vhub->regs);
+	}
+	UDCDBG(vhub, "vHub@%pR mapped @%p\n", res, vhub->regs);
+
+	platform_set_drvdata(pdev, vhub);
+
+	vhub->rst = devm_reset_control_get_optional_shared(&pdev->dev, NULL);
+
+	if (IS_ERR(vhub->rst)) {
+		rc = PTR_ERR(vhub->rst);
+		goto err;
+	}
+
+	vhub->clk = devm_clk_get(&pdev->dev, NULL);
+	if (IS_ERR(vhub->clk)) {
+		rc = PTR_ERR(vhub->clk);
+		goto err;
+	}
+	rc = clk_prepare_enable(vhub->clk);
+	if (rc) {
+		dev_err(&pdev->dev, "Error couldn't enable clock (%d)\n", rc);
+		goto err;
+	}
+
+	if (vhub->rst) {
+		mdelay(10);
+		rc = reset_control_deassert(vhub->rst);
+		if (rc)
+			goto err;
+	}
+
+	if (pdata->g7_pcie != NOT_SUPPORTED) {
+		rc = ast_vhub_init_pcie(vhub, pdata);
+		if (rc)
+			goto err;
+
+		/* For G7 PortA/B, enable the option of TXFIFO fix.
+		 * It forces the CRC error for a re-try when vHub cannot fetch DRAM in time.
+		 */
+		val = readl(vhub->regs + pdata->txfifo_fix_reg);
+		writel(pdata->txfifo_fix_val | val,
+		       vhub->regs + pdata->txfifo_fix_reg);
+	}
+
+	ast_vhub_init_uart(&pdev->dev, vhub);
+
+	/* Check if we need to limit the HW to USB1 */
+	max_speed = usb_get_maximum_speed(&pdev->dev);
+	if (max_speed != USB_SPEED_UNKNOWN && max_speed < USB_SPEED_HIGH)
+		vhub->force_usb1 = true;
+
+	/* Mask & ack all interrupts before installing the handler */
+	writel(0, vhub->regs + AST_VHUB_IER);
+	writel(VHUB_IRQ_ACK_ALL, vhub->regs + AST_VHUB_ISR);
+
+	/* Find interrupt and install handler */
+	vhub->irq = platform_get_irq(pdev, 0);
+	if (vhub->irq < 0) {
+		rc = vhub->irq;
+		goto err;
+	}
+	rc = devm_request_irq(&pdev->dev, vhub->irq, ast_vhub_irq, 0,
+			      KBUILD_MODNAME, vhub);
+	if (rc) {
+		dev_err(&pdev->dev, "Failed to request interrupt\n");
+		goto err;
+	}
+
+	rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
+	if (rc) {
+		dev_warn(&pdev->dev, "No suitable DMA available\n");
+		goto err;
+	}
+
+	/*
+	 * Allocate DMA buffers for all EP0s in one chunk,
+	 * one per port and one for the vHub itself
+	 */
+	vhub->ep0_bufs = dma_alloc_coherent(&pdev->dev,
+					    AST_VHUB_EP0_MAX_PACKET *
+					    (vhub->max_ports + 1),
+					    &vhub->ep0_bufs_dma, GFP_KERNEL);
+	if (!vhub->ep0_bufs) {
+		dev_err(&pdev->dev, "Failed to allocate EP0 DMA buffers\n");
+		rc = -ENOMEM;
+		goto err;
+	}
+	UDCVDBG(vhub, "EP0 DMA buffers @%p (DMA 0x%08x)\n",
+		vhub->ep0_bufs, (u32)vhub->ep0_bufs_dma);
+
+	/* Init vHub EP0 */
+	ast_vhub_init_ep0(vhub, &vhub->ep0, NULL);
+
+	/* Init devices */
+	for (i = 0; i < vhub->max_ports && rc == 0; i++)
+		rc = ast_vhub_init_dev(vhub, i);
+	if (rc)
+		goto err;
+
+	/* Init hub emulation */
+	rc = ast_vhub_init_hub(vhub);
+	if (rc)
+		goto err;
+
+	/* Initialize HW */
+	ast_vhub_init_hw(vhub);
+
+	dev_info(&pdev->dev, "Initialized virtual hub in USB%d mode\n",
+		 vhub->force_usb1 ? 1 : 2);
+
+	return 0;
+ err:
+	ast_vhub_remove(pdev);
+	return rc;
+}
+
+static const struct ast_vhub_match_data aspeed_vhub_match_data = {
+	.g7_pcie = NOT_SUPPORTED,
+};
+
+static const struct ast_vhub_match_data aspeed_g7_vhuba0_match_data = {
+	.g7_pcie = PCIE_EHCI,
+	.usb_mode_mask = GENMASK(25, 24),
+	.xhci_mode_mask = 0,
+	.txfifo_fix_reg = 0x800,
+	.txfifo_fix_val = BIT(13),
+};
+
+static const struct ast_vhub_match_data aspeed_g7_vhubb0_match_data = {
+	.g7_pcie = PCIE_EHCI,
+	.usb_mode_mask = GENMASK(29, 28),
+	.xhci_mode_mask = 0,
+	.txfifo_fix_reg = 0x800,
+	.txfifo_fix_val = BIT(13),
+};
+
+static const struct ast_vhub_match_data aspeed_g7_vhuba1_match_data = {
+	.g7_pcie = PCIE_XHCI,
+	.usb_mode_mask = GENMASK(3, 2),
+	.xhci_mode_mask = BIT_MASK(9),
+	.txfifo_fix_reg = 0x80C,
+	.txfifo_fix_val = BIT(31),
+};
+
+static const struct ast_vhub_match_data aspeed_g7_vhubb1_match_data = {
+	.g7_pcie = PCIE_XHCI,
+	.usb_mode_mask = GENMASK(7, 6),
+	.xhci_mode_mask = BIT_MASK(10),
+	.txfifo_fix_reg = 0x80C,
+	.txfifo_fix_val = BIT(31),
+};
+
+static const struct ast_vhub_match_data aspeed_g7_vhubc_match_data = {
+	.g7_pcie = NOT_SUPPORTED,
+};
+
+static const struct ast_vhub_match_data aspeed_g7_vhubd_match_data = {
+	.g7_pcie = NOT_SUPPORTED,
+};
+
+static const struct of_device_id ast_vhub_dt_ids[] = {
+	{
+		.compatible = "aspeed,ast2400-usb-vhub",
+		.data = &aspeed_vhub_match_data,
+	},
+	{
+		.compatible = "aspeed,ast2500-usb-vhub",
+		.data = &aspeed_vhub_match_data,
+	},
+	{
+		.compatible = "aspeed,ast2600-usb-vhub",
+		.data = &aspeed_vhub_match_data,
+	},
+	{
+		.compatible = "aspeed,ast2700-usb-vhuba0",
+		.data = &aspeed_g7_vhuba0_match_data,
+	},
+	{
+		.compatible = "aspeed,ast2700-usb-vhubb0",
+		.data = &aspeed_g7_vhubb0_match_data,
+	},
+	{
+		.compatible = "aspeed,ast2700-usb-vhuba1",
+		.data = &aspeed_g7_vhuba1_match_data,
+	},
+	{
+		.compatible = "aspeed,ast2700-usb-vhubb1",
+		.data = &aspeed_g7_vhubb1_match_data,
+	},
+	{
+		.compatible = "aspeed,ast2700-usb-vhubc",
+		.data = &aspeed_g7_vhubc_match_data,
+	},
+	{
+		.compatible = "aspeed,ast2700-usb-vhubd",
+		.data = &aspeed_g7_vhubd_match_data,
+	},
+	{ }
+};
+MODULE_DEVICE_TABLE(of, ast_vhub_dt_ids);
+
+static struct platform_driver ast_vhub_driver = {
+	.probe		= ast_vhub_probe,
+	.remove		= ast_vhub_remove,
+	.driver		= {
+		.name	= KBUILD_MODNAME,
+		.of_match_table	= ast_vhub_dt_ids,
+	},
+};
+module_platform_driver(ast_vhub_driver);
+
+MODULE_DESCRIPTION("Aspeed vHub udc driver");
+MODULE_AUTHOR("Benjamin Herrenschmidt <benh@kernel.crashing.org>");
+MODULE_LICENSE("GPL");

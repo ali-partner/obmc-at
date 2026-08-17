@@ -1,0 +1,13 @@
+[Unit]
+Description=Setup GPIOs in OpenBMC
+Before=power-on.service
+After=sysinit.target
+DefaultDependencies=no
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/python3 /usr/local/bin/openbmc_gpio_setup.py
+
+[Install]
+WantedBy=multi-user.target

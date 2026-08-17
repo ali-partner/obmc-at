@@ -1,0 +1,13 @@
+[Unit]
+Description=Startup Scripts
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/power_on_config_setup.sh
+Type=oneshot
+StandardOutput=tty
+StandardError=tty
+TTYPath=/dev/ttyS4
+
+[Install]
+WantedBy=multi-user.target
