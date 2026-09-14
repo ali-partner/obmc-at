@@ -89,6 +89,7 @@ LOCAL_URI += "file://board-utils.sh \
             file://i2c_topology_create_AS42-64S-AT.sh \
             file://AS42-64S-AT_board-utils.sh \
             file://setup_ina3221.sh \
+            file://emmc_cycle.sh \
            "
 
 OPENBMC_UTILS_FILES += " \
@@ -179,5 +180,6 @@ OPENBMC_UTILS_FILES += " \
     i2c_topology_create_AS42-64S-AT.sh \
     AS42-64S-AT_board-utils.sh \
     setup_ina3221.sh \
+    emmc_cycle.sh \
     "
 

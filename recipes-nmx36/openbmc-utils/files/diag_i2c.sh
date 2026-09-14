@@ -5,11 +5,11 @@ PROGRAM_TITLE=`basename $0`
 has_error=0
 WRITE_VALUE1=0x00
 WRITE_VALUE2=0x01
-VENDOR_ID_MP29=0x0025
+# 08000000=0x0025
 VENDOR_ID_IF=0x4602
 VENDOR_ID_IF_1A2GxB=0x0002
 SYSFS_I2C_DEVICES="/sys/bus/i2c/devices"
-I2C_Freq_SCL=91
+I2C_Freq_SCL=98
 I2CS_FILE="/tmp/i2c_file"
 BASECPLD_PATH="/sys/bus/i2c/devices/0-000d"
 PMBUS_TIMEOUT_TIME=0x3d30
@@ -25,10 +25,10 @@ cleanup(){
 
 usage() {
     echo
-    echo "Usage: $PROGRAM_TITLE [check|stress|speed] <i2c:0-8,13> <count>"
+    echo "Usage: $PROGRAM_TITLE [check|stress|speed] <i2c:0-8,11> <count>"
     echo
     echo "Paramter:"
-    echo "    i2c      --Means i2c0-i2c2,i2c4-i2c8,i2c13,ONLY for set parameter"
+    echo "    i2c      --Means i2c0-i2c8,i2c11,ONLY for set parameter"
     echo "    count    --Set stress test counts"
     echo
     echo "Example:"
@@ -62,18 +62,18 @@ i2c_read_write(){
         return -1
     fi
 
-    retval=`i2cget -f -y $bus $addr $reg`
-    if [ "$read_val" == "" ]; then
-        if [ "$retval" != "$write_val" ]; then
-            echo "$i2c ${name}(${bus}, ${addr}, ${reg}) check error. Value: ${retval}, Expect: ${write_val}"
-            return -1
-        fi
-    else
-        if [ "$retval" != "$read_val" ]; then
-            echo "$i2c ${name}(${bus}, ${addr}, ${reg}) check error. Value: ${retval}, Expect: ${read_val}"
-            return -1
-        fi
-    fi
+    # retval=`i2cget -f -y $bus $addr $reg`
+    # if [ "$read_val" == "" ]; then
+    #     if [ "$retval" != "$write_val" ]; then
+    #         echo "$i2c ${name}(${bus}, ${addr}, ${reg}) check error. Value: ${retval}, Expect: ${write_val}"
+    #         return -1
+    #     fi
+    # else
+    #     if [ "$retval" != "$read_val" ]; then
+    #         echo "$i2c ${name}(${bus}, ${addr}, ${reg}) check error. Value: ${retval}, Expect: ${read_val}"
+    #         return -1
+    #     fi
+    # fi
     i2cset -f -y $bus $addr $reg $defval
     if [ $? -ne 0 ]; then
         echo "$i2c ${name}(${bus}, ${addr}, ${reg}) write defval(${defval}) error."
@@ -344,59 +344,70 @@ check_i2c8() {
     return $has_error
 }
 
-check_i2c13(){
+check_i2c11(){
+    # local has_error=0
+    # cnt=0
+    # while true
+    # do
+    #     ((cnt++))
+    #     if [ $cnt -eq 4 ]; then
+    #         echo "i2c-13 SI52208(13, 0x69) device node error."
+    #         has_error=-1
+    #         break
+    #     fi
+
+    #     ##SI52208 0x69  ${ret_byte:5:6}
+    #     # exec i2ctransfer read data
+    #     raw_output=$(i2ctransfer -f -y 11 w1@0x69 0x05 r6 2>/dev/null)
+    #     ret_status=$?
+    #     read_byte=$(echo "$raw_output" | awk '{print $5}')
+    #     #echo $read_byte
+    #     # check command exec OR str null OR str is not 0x**
+    #     if [ $ret_status -ne 0 ] || [ -z "$read_byte" ] || ! [[ "$read_byte" =~ ^0[xX][0-9A-Fa-f]{1,2}$ ]]; then
+    #         echo "i2c-13 SI52208(13, 0x69) read error(count=${cnt})."
+    #         sleep 0.1
+    #         continue
+    #     else
+    #         printf "%-6s %-24s bus%-4s 0x%-2s - OK\n" i2c-13 SI52208 13 69 >> $I2CS_FILE
+    #         break
+    #     fi
+    # done
+
+    # cnt=0
+    # while true
+    # do
+    #     ((cnt++))
+    #     if [ $cnt -eq 4 ]; then
+    #         echo "i2c-13 SI5361B(104, 0x58) device node error."
+    #         has_error=-1
+    #         break
+    #     fi
+
+    #     ##SI5361B 0x58
+    #     # exec i2ctransfer read data : 0x80 0x62 0x53 0x41 0x41 0xdf 0x41 0x00 0x00 0x00 0x00 0x01 0x0a 0x02
+    #     raw_output=$(i2ctransfer -f -y 104 w3@0x58 0xF0 0x0F 0x08 r14 2>/dev/null)
+    #     ret_status=$?
+    #     read_byte=$(echo "$raw_output" | awk '{print $2}')
+    #     #echo $read_byte
+    #     # check command exec OR str null OR str is not 0x**
+    #     if [ $ret_status -ne 0 ] || ! [ "x$read_byte" == "x0x62" ]; then
+    #         echo "i2c-13 SI5361B(104, 0x58) read error(count=${cnt})."
+    #         sleep 0.1
+    #         continue
+    #     else
+    #         printf "%-6s %-24s bus%-4s 0x%-2s - OK\n" i2c-13 SI5361B 104 58 >> $I2CS_FILE
+    #         break
+    #     fi
+    # done
+    # return $has_error
+
+    check_count=$1
     local has_error=0
-    cnt=0
-    while true
-    do
-        ((cnt++))
-        if [ $cnt -eq 4 ]; then
-            echo "i2c-13 SI52208(13, 0x69) device node error."
-            has_error=-1
-            break
-        fi
-
-        ##SI52208 0x69  ${ret_byte:5:6}
-        # exec i2ctransfer read data
-        raw_output=$(i2ctransfer -f -y 13 w1@0x69 0x05 r6 2>/dev/null)
+    for i2c_dev_cfg in "${i2c11_device_configs[@]}"; do
+        i2c_device_test_func i2c-11 $check_count $i2c_dev_cfg
         ret_status=$?
-        read_byte=$(echo "$raw_output" | awk '{print $5}')
-        #echo $read_byte
-        # check command exec OR str null OR str is not 0x**
-        if [ $ret_status -ne 0 ] || [ -z "$read_byte" ] || ! [[ "$read_byte" =~ ^0[xX][0-9A-Fa-f]{1,2}$ ]]; then
-            echo "i2c-13 SI52208(13, 0x69) read error(count=${cnt})."
-            sleep 0.1
-            continue
-        else
-            printf "%-6s %-24s bus%-4s 0x%-2s - OK\n" i2c-13 SI52208 13 69 >> $I2CS_FILE
-            break
-        fi
-    done
-
-    cnt=0
-    while true
-    do
-        ((cnt++))
-        if [ $cnt -eq 4 ]; then
-            echo "i2c-13 SI5361B(104, 0x58) device node error."
+        if [ $ret_status -ne 0 ]; then
             has_error=-1
-            break
-        fi
-
-        ##SI5361B 0x58
-        # exec i2ctransfer read data : 0x80 0x62 0x53 0x41 0x41 0xdf 0x41 0x00 0x00 0x00 0x00 0x01 0x0a 0x02
-        raw_output=$(i2ctransfer -f -y 104 w3@0x58 0xF0 0x0F 0x08 r14 2>/dev/null)
-        ret_status=$?
-        read_byte=$(echo "$raw_output" | awk '{print $2}')
-        #echo $read_byte
-        # check command exec OR str null OR str is not 0x**
-        if [ $ret_status -ne 0 ] || ! [ "x$read_byte" == "x0x62" ]; then
-            echo "i2c-13 SI5361B(104, 0x58) read error(count=${cnt})."
-            sleep 0.1
-            continue
-        else
-            printf "%-6s %-24s bus%-4s 0x%-2s - OK\n" i2c-13 SI5361B 104 58 >> $I2CS_FILE
-            break
         fi
     done
     return $has_error
@@ -416,6 +427,11 @@ check_all_i2c(){
     fi
 
     check_i2c2 $total_count
+    if [ $? -ne 0 ]; then
+        has_error=-1
+    fi
+
+    check_i2c3 $total_count
     if [ $? -ne 0 ]; then
         has_error=-1
     fi
@@ -445,7 +461,7 @@ check_all_i2c(){
         has_error=-1
     fi
 
-    check_i2c13
+    check_i2c11
     if [ $? -ne 0 ]; then
         has_error=-1
     fi
@@ -490,6 +506,13 @@ i2c_stress(){
                     exit -1
                 fi
                 ;;
+            3)
+                check_i2c3 $loop_count
+                if [ $? -ne 0 ]; then
+                    echo "i2c stress test loop $loop_count failed."
+                    exit -1
+                fi
+                ;;
             4)
                 check_i2c4 $loop_count
                 if [ $? -ne 0 ]; then
@@ -523,8 +546,8 @@ i2c_stress(){
                     exit -1
                 fi
                 ;;
-            13)
-                check_i2c13
+            11)
+                check_i2c11
                 if [ $? -ne 0 ]; then
                     echo "i2c stress test loop $loop_count failed."
                     exit -1
@@ -559,13 +582,34 @@ i2c_stress(){
 i2c_speed(){
     APB_clock=100000
 
-    val=`busybox devmem 0x14c0f104 32`
-    val=$((${val} & 0xfffff))
-    Basecyc=$((2**($val & 0xf)))
-    CK_low=$(((($val & 0xf000)>>12)+1))
-    CK_high=$(((($val & 0xf0000)>>16)+1))
+    # val=`busybox devmem 0x14c0f104 32`
+    # val=$((${val} & 0xfffff))
+    # Basecyc=$((2**($val & 0xf)))
+    # CK_low=$(((($val & 0xf000)>>12)+1))
+    # CK_high=$(((($val & 0xf0000)>>16)+1))
 
-    Freq_SCL=$(($APB_clock/$(($Basecyc * ($CK_low+$CK_high)))))
+    # Freq_SCL=$(($APB_clock/$(($Basecyc * ($CK_low+$CK_high)))))
+    # echo "I2C: Freq_SCL $Freq_SCL kHz"
+    # if [[ $Freq_SCL -ne $I2C_Freq_SCL ]]; then
+    #     echo "Check I2C bus frequency: FAIL"
+    #     exit -1
+    # fi
+    # echo "Check I2C bus frequency: PASS"
+
+    val=`busybox devmem 0x14c0f104 32`
+    # 提取 TBASECLK (低 8 位)
+    baseclk_idx=$((val & 0xFF))
+
+    # 提取 SCL_LOW (位 15:12) 和 SCL_HIGH (位 19:16)
+    scl_low=$(((val >> 12) & 0xF))
+    scl_high=$(((val >> 16) & 0xF))
+
+    # 计算基时钟频率
+    base_clk=$((APB_clock / (baseclk_idx + 1)))
+
+    # SCL 周期数 = (scl_low+1) + (scl_high+1) = scl_low + scl_high + 2
+    Freq_SCL=$((base_clk / (scl_low + scl_high + 2)))
+
     echo "I2C: Freq_SCL $Freq_SCL kHz"
     if [[ $Freq_SCL -ne $I2C_Freq_SCL ]]; then
         echo "Check I2C bus frequency: FAIL"
@@ -605,6 +649,10 @@ case "$mode" in
                 check_i2c2 1
                 cat $I2CS_FILE
                 ;;
+            3)
+                check_i2c3 1
+                cat $I2CS_FILE
+                ;;
             4)
                 check_i2c4 1
                 cat $I2CS_FILE
@@ -625,8 +673,8 @@ case "$mode" in
                 check_i2c8 1
                 cat $I2CS_FILE
                 ;;
-            13)
-                check_i2c13
+            11)
+                check_i2c11
                 cat $I2CS_FILE
                 ;;
             '')

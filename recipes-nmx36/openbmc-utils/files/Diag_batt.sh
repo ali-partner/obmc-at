@@ -20,9 +20,10 @@ RTC_BATTERY_STATE_SYSFS="${BASECPLD_SYSFS_DIR}/rtc_battery_state"
 do_battery_vol_detect_by_cpld() {
     echo -e "RTC battery detects the enable signal ...\n"
     echo 1 > $RTC_BATTERY_EN_SYSFS
-    
+    usleep 100000
+
     batt_state_cpld=`cat $RTC_BATTERY_STATE_SYSFS | sed -n 1p`
-    
+
     echo 0 > $RTC_BATTERY_EN_SYSFS
     if [ "$batt_state_cpld" == "0x1" ]; then
         echo -e "The RTC battery voltage state by CPLD : normal\n"
@@ -35,44 +36,38 @@ do_battery_vol_detect_by_cpld() {
 }
 
 
-SYSTEM_GPIO_DIR="/sys/class/gpio/gpio735"
-IN_VOLTAGE_PATH="/sys/devices/platform/soc@14000000/14c00100.adc/iio:device1"
+IN_VOLTAGE_PATH="/sys/devices/platform/soc@14000000/14c00000.adc/iio:device0"
 
 do_battery_vol_detect_by_bmc(){
-    # 打开开关GPIOAA3
-    if [ ! -d $SYSTEM_GPIO_DIR ]; then
-        echo "Config $SYSTEM_GPIO_DIR"
-        echo 735 > /sys/class/gpio/export
-    fi
-    echo out > /sys/class/gpio/gpio735/direction; echo 1 > /sys/class/gpio/gpio735/value
-    usleep 400
+    # 打开开关
+    echo 1 > $RTC_BATTERY_EN_SYSFS
+    usleep 100000
 
-    # 读BMC ADC10输入电压及其系数
-    raw_data=$(cat ${IN_VOLTAGE_PATH}/in_voltage2_raw)
+    # 读BMC ADC0输入电压及其系数
+    raw_data=$(cat ${IN_VOLTAGE_PATH}/in_voltage0_raw)
     raw_scale=$(cat ${IN_VOLTAGE_PATH}/in_voltage_scale)
     adc_offset=$(cat ${IN_VOLTAGE_PATH}/in_voltage_offset)
 
     echo "Read BMC system voltage is ${raw_data}"
 
-    # 测完后关掉GPIOAA3
-    echo 0 > /sys/class/gpio/gpio735/value; echo in > /sys/class/gpio/gpio735/direction
-    echo 735 > /sys/class/gpio/unexport
+    # 测完后关掉
+    echo 0 > $RTC_BATTERY_EN_SYSFS
 
     # 计算电压值，其中分压系数为2
     cal_value=$(echo "$raw_data  $adc_offset $raw_scale 1000" | awk '{printf("%0.9f\n", ($1-$2)*$3/$4)}')
     vol_value=$(echo "$cal_value 2" | awk '{printf("%0.3f\n", $1*$2)}')
-    echo "BMC ADC7 voltage: $vol_value"
+    echo "BMC ADC0 voltage: $vol_value"
 
-    # 硬件提供的电压阈值范围2.0~3.67V
+    # 硬件提供的电压阈值范围2.0~3.3V
     LowThd=2.0
     HighThd=3.4
-    echo "BMC ADC7 voltage threshold: ${LowThd}~${HighThd}"
+    echo "BMC ADC0 voltage threshold: ${LowThd}~${HighThd}"
 
     # 判断电压是否超出阈值
     THD_L=$(awk -v x="$vol_value" -v y=$LowThd 'BEGIN{print(x>=y)?"0":"1"}')
     THD_H=$(awk -v x="$vol_value" -v y=$HighThd 'BEGIN{print(x<=y)?"0":"1"}')
     if [[ $THD_L -eq 1 || $THD_H -eq 1 ]]; then
-        echo "BMC ADC7 voltage: $vol_value not within threshold: ${LowThd}~${HighThd}"
+        echo "BMC ADC0 voltage: $vol_value not within threshold: ${LowThd}~${HighThd}"
         echo "RTC test Failed"
         exit 1
     fi

@@ -1,6 +1,6 @@
 /*
  * tps544b25.c - The i2c driver to get following tps information:
- * 
+ *
  */
 
 // #define DEBUG
@@ -231,6 +231,18 @@ static ssize_t tps_power_show(struct device *dev,
     return scnprintf(buf, PAGE_SIZE*2, "%d\n", v * i);
 }
 
+static ssize_t tps_temp_show(struct device *dev,
+                                struct device_attribute *attr,
+                                char *buf)
+{
+    int result = tps_convert(dev, attr);
+    if (result < 0) {
+        return -1;
+    }
+
+    return scnprintf(buf, PAGE_SIZE, "%d\n", result);
+}
+
 static const i2c_dev_attr_st tps_attr_table[] = {
     {
         "in1_input",
@@ -252,6 +264,13 @@ static const i2c_dev_attr_st tps_attr_table[] = {
         tps_power_show,
         NULL,
         0x7d, 0, 8,
+    },
+    {
+        "temp1_input",
+        NULL,
+        tps_temp_show,
+        NULL,
+        0x8e, 0, 8,
     },
 };
 

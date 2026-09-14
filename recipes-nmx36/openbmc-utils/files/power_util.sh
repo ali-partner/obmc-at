@@ -64,6 +64,23 @@ case "$object" in
                 ;;
         esac
         ;;
+    emmc)
+        case "$mode" in
+            on)
+                power.sh emmc_pwr_on
+                ;;
+            off)
+                power.sh emmc_pwr_off
+                ;;
+            cycle)
+                power.sh emmc_pwr_cycle
+                ;;
+            *)
+                usage
+                exit -1
+                ;;
+        esac
+        ;;
     *)
         usage
         exit -1

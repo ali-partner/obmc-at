@@ -23,7 +23,7 @@
 #include <fcntl.h>
 
 #define BAUDRATE B9600
-#define CPU_CONSOLE "ttyS1"
+#define CPU_CONSOLE "ttyS0"
 
 extern speed_t baudrate;
 

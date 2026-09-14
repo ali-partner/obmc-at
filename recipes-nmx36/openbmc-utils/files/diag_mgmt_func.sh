@@ -9,8 +9,8 @@ read_rdb_reg()
 {
     reg=$1
     reg_str=`printf "0x%04X" $reg`
-    reg_write=`ast-mdio.py --mdio 3 --phy 0x09 write 0x1e $reg_str`
-    reg_val_str=`ast-mdio.py --mdio 3 --phy 0x09 read 0x1f | awk '{print $5}'`
+    reg_write=`ast-mdio.py --mdio 2 --phy 0x09 write 0x1e $reg_str`
+    reg_val_str=`ast-mdio.py --mdio 2 --phy 0x09 read 0x1f | awk '{print $5}'`
     echo "$reg_val_str"
 }
 
@@ -19,8 +19,8 @@ write_rdb_reg()
     reg=$1
     reg_val_str=$2
     reg_str=`printf "0x%04X" $reg`
-    ast-mdio.py --mdio 3 --phy 0x09 write 0x1e $reg
-    ast-mdio.py --mdio 3 --phy 0x09 write 0x1f $reg_val_str
+    ast-mdio.py --mdio 2 --phy 0x09 write 0x1e $reg
+    ast-mdio.py --mdio 2 --phy 0x09 write 0x1f $reg_val_str
     return $?
 }
 
@@ -71,7 +71,7 @@ read_reg()
 {
     reg=$1
     reg_str=`printf "0x%04X" $reg`
-    reg_val_str=`ast-mdio.py --mdio 3 --phy 0x09 read $reg_str | awk '{print $5}'`
+    reg_val_str=`ast-mdio.py --mdio 2 --phy 0x09 read $reg_str | awk '{print $5}'`
     echo "$reg_val_str"
 }
 
@@ -80,7 +80,7 @@ write_reg()
     reg=$1
     reg_val_str=$2
     reg_str=`printf "0x%04X" $reg`
-    ast-mdio.py --mdio 3 --phy 0x09 write $reg $reg_val_str
+    ast-mdio.py --mdio 2 --phy 0x09 write $reg $reg_val_str
     return $?
 }
 
@@ -141,8 +141,8 @@ do_read_phy_check()
 do_read_port_link_status()
 {
     status_reg=$COPPER_STATUS_REG
-    #1'b1 Link is up 
-    #1'b0 Link is up 
+    #1'b1 Link is up
+    #1'b0 Link is up
     get_rdb_reg_bit $status_reg 2
 
     if [ $? -eq 1 ]; then
@@ -206,12 +206,12 @@ do_read_set_port_speed()
     echo "reg value: $reg_val"
     case "$speed" in
         100)
-            #Copper auto-negotiation disable 
+            #Copper auto-negotiation disable
             #clr_reg_bit $status_reg 12
             #Set 100BASE-TX
             #clr_reg_bit $status_reg 6
             #set_reg_bit $status_reg 13
-            #Copper auto-negotiation disable 
+            #Copper auto-negotiation disable
             bit_mask3=$((1<<$COPPER_AN_BIT))
             bit_mask_str3=`printf '0x%04X' $((~$bit_mask3))`
             reg_new_val=$(($reg_val&$bit_mask_str3))
@@ -227,13 +227,13 @@ do_read_set_port_speed()
 
             ;;
         1000)
-            #Copper auto-negotiation enable 
+            #Copper auto-negotiation enable
             #set_reg_bit $status_reg 12
             #Set 1000BASE-T
             #set_reg_bit $status_reg 6
             #clr_reg_bit $status_reg 13
 
-            #Copper auto-negotiation enable 
+            #Copper auto-negotiation enable
             bit_mask3=$((1<<$COPPER_AN_BIT))
             bit_mask_str3=`printf '0x%04X' $bit_mask3`
             reg_new_val=$(($reg_val|$bit_mask_str3))

@@ -1898,8 +1898,7 @@ def drv_osfp_read_vout_read_all():
 #systemctl stop fanctrl.service
 #systemctl stop dcdcmon.service
 #systemctl stop restful.service
-#arr_info = ['cpumon.service','powermon.service','fanctrl.service','dcdcmon.service','restful.service']
-arr_info = [ ]
+arr_info = ['cpumon.service','powermon.service','fanctrl.service','dcdcmon.service','restful.service']
 def drv_platform_service_opt(opt):
     for index in arr_info:
         if (opt == 0):

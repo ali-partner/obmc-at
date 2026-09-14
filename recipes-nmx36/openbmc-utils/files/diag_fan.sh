@@ -28,11 +28,11 @@ fan_status(){
     if [[ "$fan_board_type" == "0" ]]; then
         for i in ${fan_air}
         do
-            if [[ "$i" -ge 1 ]] && [[ "$i" -le 4 ]]; then
-                local_index=$i
+            if (( i % 2 == 1 )); then
+                local_index=$(((i + 1) / 2))
                 FANCPLD_SYSFS_DIR=$FAN1CPLD_SYSFS_DIR
-            elif [[ "$i" -ge 5 ]] && [[ "$i" -le 8 ]]; then
-                local_index=$((i - 4))
+            else
+                local_index=$((i / 2))
                 FANCPLD_SYSFS_DIR=$FAN2CPLD_SYSFS_DIR
             fi
 
@@ -62,11 +62,11 @@ get_speed(){
     if [[ "$fan_board_type" == "0" ]]; then
         for i in ${fan_air}
         do
-            if [[ "$i" -ge 1 ]] && [[ "$i" -le 4 ]]; then
-                local_index=$i
+            if (( i % 2 == 1 )); then
+                local_index=$(((i + 1) / 2))
                 FANCPLD_SYSFS_DIR=$FAN1CPLD_SYSFS_DIR
-            elif [[ "$i" -ge 5 ]] && [[ "$i" -le 8 ]]; then
-                local_index=$((i - 4))
+            else
+                local_index=$((i / 2))
                 FANCPLD_SYSFS_DIR=$FAN2CPLD_SYSFS_DIR
             fi
 
@@ -115,22 +115,22 @@ set_pwm(){
         if [ "$1" == "all" ]; then
             for i in ${fan_air}
             do
-                if [[ "$i" -ge 1 ]] && [[ "$i" -le 4 ]]; then
-                    local_index=$i
+                if (( i % 2 == 1 )); then
+                    local_index=$(((i + 1) / 2))
                     FANCPLD_SYSFS_DIR=$FAN1CPLD_SYSFS_DIR
-                elif [[ "$i" -ge 5 ]] && [[ "$i" -le 8 ]]; then
-                    local_index=$((i - 4))
+                else
+                    local_index=$((i / 2))
                     FANCPLD_SYSFS_DIR=$FAN2CPLD_SYSFS_DIR
                 fi
-                echo "fan${i} pwm to ${pwm}"
+                echo "Set fan${i} pwm to ${pwm}"
                 echo $pwm > ${FANCPLD_SYSFS_DIR}/fantray${local_index}_pwm
             done
         else
-            if [[ "$1" -ge 1 ]] && [[ "$1" -le 4 ]]; then
-                local_index=$1
+            if (( $1 % 2 == 1 )); then
+                local_index=$((($1 + 1) / 2))
                 FANCPLD_SYSFS_DIR=$FAN1CPLD_SYSFS_DIR
-            elif [[ "$1" -ge 5 ]] && [[ "$1" -le 8 ]]; then
-                local_index=$(( $1 - 4 ))
+            else
+                local_index=$(($1 / 2))
                 FANCPLD_SYSFS_DIR=$FAN2CPLD_SYSFS_DIR
             fi
             echo "Set fan${1} pwm to ${pwm}"

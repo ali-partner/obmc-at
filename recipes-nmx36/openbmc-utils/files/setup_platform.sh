@@ -84,7 +84,10 @@ echo 0 > ${FAN2CPLD_SYSFS_DIR}/fan_watchdog_en
 echo 1 > ${FAN2CPLD_SYSFS_DIR}/fan_watchdog_en
 
 echo "green" > /tmp/sysfanled
-echo 7 >/proc/sys/kernel/printk
+echo 4 >/proc/sys/kernel/printk
+
+#主动读清一次
+cat ${BASECPLD_SYSFS_DIR}/pcie4_clk_alarm_clr 2>/dev/null
 
 echo -n "Setting BASE CPLD register SYS_LED(0x50) to green..."
 /usr/sbin/i2cset -f -y 0 0xd 0x50 0x4

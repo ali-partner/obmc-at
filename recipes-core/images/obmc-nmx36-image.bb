@@ -50,7 +50,7 @@ IMAGE_INSTALL += " \
   e2fsprogs \
   fpgaupdate-spi \
   startup \
-  peci-util \
+  libpeci \
   dhcpcd \
   libbic \
   openbmc-gpio \
@@ -66,4 +66,7 @@ IMAGE_INSTALL += " \
   restful \
   devmon \
   stressapptest \
+  mmc-utils \
+  mmc-raw \
+  monitor \
   "

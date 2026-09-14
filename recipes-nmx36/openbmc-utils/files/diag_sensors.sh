@@ -89,8 +89,8 @@ printUsage() {
     echo "  --dc"
     echo "  -f: show all FANs information."
     echo "  --fan"
-    echo "  -v: show all voltage information."
-    echo "  --voltage"
+    # echo "  -v: show all voltage information."
+    # echo "  --voltage"
     echo "  -c: show all clock information."
     echo "  --clock"
     echo "  -a: show all sensors information."
@@ -195,7 +195,11 @@ lm75_device_print() {
         printf "%-36s device node not exist\n" ${name} >> $ERROR_FILE
         printf "%-36s | %-10s | %-10s | %-8s | %-12.3f | %-12.3f\n" ${name} "NA" "degrees C" "NA" ${lower_limit} ${upper_limit} >> $SENSORS_FILE
     else
-        current=`echo "${current} 1000"|awk '{printf("%0.3f\n", $1/$2)}'`
+        if [[ ${name} = "Temp_TPS544B25_IIC_17_0x27" || ${name} == "Temp_MAC" ]];then
+            current=`echo "${current}"|awk '{printf("%0.3f\n", $1)}'`
+        else
+            current=`echo "${current} 1000"|awk '{printf("%0.3f\n", $1/$2)}'`
+        fi
         if [[ ${name} = "xSFP_MAX_TEMP" || ${name} = "X86_CORE" ]]; then
             current=`echo "${current} 1000"|awk '{printf("%0.3f\n", $1*$2)}'`
         fi
@@ -228,44 +232,58 @@ check_temp_sensors() {
 check_cpu_temp() {
     local CPU_str; local CPU_val1; local CPU_val2; local CPU_val; local sign_bit1; local sign_bit
     local m; local n; local temp
-    CPU0_TEMP_CMD=`/usr/local/bin/ipmb-util 13 0x2c 0xb8 0x40 0x57 0x01 0x00 0x30 0x01 0x02 0x01`
-    CPU_str=$CPU0_TEMP_CMD
+    # CPU0_TEMP_CMD=`/usr/local/bin/ipmb-util 13 0x2c 0xb8 0x40 0x57 0x01 0x00 0x30 0x01 0x02 0x01`
+    # CPU_str=$CPU0_TEMP_CMD
 
 
-    CPU_val1=`echo $CPU_str | grep -i Com_code`
-    if [ $? -eq 0 ]; then
-        SENSOR_TEMP=0.000
-        return
-    fi
+    # CPU_val1=`echo $CPU_str | grep -i Com_code`
+    # if [ $? -eq 0 ]; then
+    #     SENSOR_TEMP=0.000
+    #     return
+    # fi
 
-    CPU_val1=`echo ${CPU_str:0-3:2}`
-    CPU_val2=`echo ${CPU_str:0-6:2}`
-    CPU_val=0x${CPU_val1}${CPU_val2}
-    sign_bit1=`echo ${CPU_str:0-3:1}`
-    sign_bit=0x${sign_bit1}
+    # CPU_val1=`echo ${CPU_str:0-3:2}`
+    # CPU_val2=`echo ${CPU_str:0-6:2}`
+    # CPU_val=0x${CPU_val1}${CPU_val2}
+    # sign_bit1=`echo ${CPU_str:0-3:1}`
+    # sign_bit=0x${sign_bit1}
 
-    if [ $CPU_val1 == "FF" ] && [ $CPU_val2 == "FF" ]; then
-        SENSOR_TEMP="N/A"
-    fi
+    # CPU0_TEMP_CMD=`peci_cmds raw 0x30 0x1 0x2 0x1 | awk '{gsub(/^\s+|\s+$/, "");print}'`
+    # CPU_val1=`echo $CPU0_TEMP_CMD | awk '{print substr($2, 3)}'`
+    # CPU_val2=`echo $CPU0_TEMP_CMD | awk '{print substr($1, 3)}'`
+    # CPU_val=0x${CPU_val1}${CPU_val2}
+    # sign_bit=0x`echo ${CPU_val1:0:1}`
 
-    Tjmax_str=`/usr/local/bin/ipmb-util 13 0x2c 0xb8 0x40 0x57 0x01 0x00 0x30 0x05 0x05 0xa1 0x00 0x10 0x00 0x00`
-    Tjmax_val=0x`echo ${Tjmax_str:0-6:2}`
+    # if [ "$CPU_val1" == "FF" ] && [ "$CPU_val2" == "FF" ]; then
+    #     SENSOR_TEMP="N/A"
+    # fi
+
+    # Tjmax_str=`/usr/local/bin/ipmb-util 13 0x2c 0xb8 0x40 0x57 0x01 0x00 0x30 0x05 0x05 0xa1 0x00 0x10 0x00 0x00`
+    # Tjmax_val=0x`echo ${Tjmax_str:0-6:2}`
+    # ((Tjmax=Tjmax_val))
+    # Tjmax=105
+
+    # if [ "$(($sign_bit & 0x8))" == 8 ];then
+    #     m=$((~$(($CPU_val-1)) & 0xffff))
+    #     n=`awk -v x=$m -v y=64 'BEGIN {printf "%.3f\n",x/y}'`
+    #     SENSOR_TEMP=`awk -v x=$Tjmax -v y=$n 'BEGIN {printf "%.3f\n",x-y}'`
+    # else
+    #     ((m=$CPU_val))
+    #     n=`awk -v x=$m -v y=64 'BEGIN {printf "%.3f\n",x/y}'`
+    #     SENSOR_TEMP=`awk -v x=$Tjmax -v y=$n 'BEGIN {printf "%.3f\n",x+y}'`
+    # fi
+
+    Tjmax_str=`peci_cmds -a 0x30 RdPkgConfig 0x10 0 | awk '{print $NF}' | sed 's/0x//' | cut -c3-4`
+    Tjmax_val=0x`echo ${Tjmax_str}`
     ((Tjmax=Tjmax_val))
 
-    if [ "$(($sign_bit & 0x8))" == 8 ];then
-        m=$((~$(($CPU_val-1)) & 0xffff))
-        n=`awk -v x=$m -v y=64 'BEGIN {printf "%.3f\n",x/y}'`
-        SENSOR_TEMP=`awk -v x=$Tjmax -v y=$n 'BEGIN {printf "%.3f\n",x-y}'`
-    else
-        ((m=$CPU_val))
-        n=`awk -v x=$m -v y=64 'BEGIN {printf "%.3f\n",x/y}'`
-        SENSOR_TEMP=`awk -v x=$Tjmax -v y=$n 'BEGIN {printf "%.3f\n",x+y}'`
-    fi
+    CPU_val=`peci_cmds GetTemp | awk -F'[()]' '{print $2}' | sed 's/C$//'`
+    SENSOR_TEMP=`awk -v x=$Tjmax -v y=$CPU_val 'BEGIN {printf "%.2f\n",x+y}'`
 
 
     name="Temp_CPU"
-    lower_limit=-3
-    upper_limit=96
+    lower_limit=-1
+    upper_limit=87
     if [[ ${SENSOR_TEMP} = "N/A" ]]; then
         has_error=-1
         printf "%-36s device node not exist\n" ${name} >> $ERROR_FILE
@@ -328,7 +346,7 @@ check_dimm_temp() {
         printf "%-36s | %-10.3f | %-10s | %-8s | %-12.3f | %-12.3f\n" ${name} ${DIMM_RD_TEMP[2]} "degrees C" ${status} ${lower_limit} ${upper_limit} >> $SENSORS_FILE
     fi
 }
- 
+
 
 
 dc_device_print() {
@@ -449,22 +467,24 @@ check_fan_sensors(){
             if [[ "$i" -ge 1 ]] && [[ "$i" -le 4 ]]; then
                 local_index=$i
                 FANCPLD_SYSFS_DIR=$FAN1CPLD_SYSFS_DIR
-            elif [[ "$1" -ge 5 ]] && [[ "$1" -le 8 ]]; then
+            elif [[ "$i" -ge 5 ]] && [[ "$i" -le 8 ]]; then
                 local_index=$((i - 4))
                 FANCPLD_SYSFS_DIR=$FAN2CPLD_SYSFS_DIR
             fi
+            fan_index=$i
         elif [[ "$fan_board_type" == "1" ]]; then
             local_index=$i
+            fan_index=$i
             FANCPLD_SYSFS_DIR=$FAN2CPLD_SYSFS_DIR
         fi
 
-        dir=`cat ${FANCPLD_PATH}/fantray${local_index}_direction | sed -n 1p`
+        dir=`cat ${FANCPLD_SYSFS_DIR}/fantray${local_index}_direction | sed -n 1p`
         if [ "$dir" == "0x0" ]; then
             thd=(0 0 20700 18400) #F2B
         fi
 
-        speed[0]=`cat ${FANCPLD_PATH}/fan${local_index}_speed_1`
-        speed[1]=`cat ${FANCPLD_PATH}/fan${local_index}_speed_2`
+        speed[0]=`cat ${FANCPLD_SYSFS_DIR}/fan${local_index}_speed_1`
+        speed[1]=`cat ${FANCPLD_SYSFS_DIR}/fan${local_index}_speed_2`
 
         for ((j=0; j<2; j++))
         do
@@ -473,11 +493,11 @@ check_fan_sensors(){
             if [[ $THD_L -eq 1 || $THD_H -eq 1 ]]; then
                 status="FAULT"
                 has_error=-1
-                printf "%-36s %-10.3f NOT in range: [%-12.3f, %-12.3f]\n" SPEED_fan${local_index}_${name[j]} ${speed[j]} ${thd[j]} ${thd[j+2]} >> $ERROR_FILE
+                printf "%-36s %-10.3f NOT in range: [%-12.3f, %-12.3f]\n" SPEED_fan${fan_index}_${name[j]} ${speed[j]} ${thd[j]} ${thd[j+2]} >> $ERROR_FILE
             else
                 status="OK"
             fi
-            printf "%-36s | %-10.3f | %-10s | %-8s | %-12.3f | %-12.3f\n" SPEED_fan${local_index}_${name[j]} ${speed[j]} "RPM" ${status} ${thd[j]} ${thd[j+2]} >> $SENSORS_FILE
+            printf "%-36s | %-10.3f | %-10s | %-8s | %-12.3f | %-12.3f\n" SPEED_fan${fan_index}_${name[j]} ${speed[j]} "RPM" ${status} ${thd[j]} ${thd[j+2]} >> $SENSORS_FILE
         done
     done
 }
@@ -521,7 +541,7 @@ gpio_num_val_unexport() {
     val=$"$2"
     echo "$val" > /sys/class/gpio/gpio"${num}"/value
     echo "$num" > /sys/class/gpio/unexport
-}   
+}
 
 
 adc_device_print() {
@@ -556,7 +576,7 @@ adc_device_print() {
         #echo $value_raw
         adc_scale=$(cat ${ADC_PATH_BASE}/"${bus}".adc/iio:device"${addr}"/in_voltage_scale)
         #echo $adc_scale
-        
+
         #echo $adc_offset
         if ! adc_offset=$(cat ${ADC_PATH_BASE}/"${bus}".adc/iio:device"${addr}"/in_voltage_offset); then
             has_error=-1
@@ -635,7 +655,7 @@ parseCommandLine() {
             -t|--temp)
                 printf "%-36s | %-10s | %-10s | %-8s | %-12s | %-12s\n" Name Value Units Status Lower_Limit Upper_Limit
                 check_cpu_temp
-                check_dimm_temp
+                # check_dimm_temp
                 check_temp_sensors
                 cat $SENSORS_FILE
                 if [ $has_error -eq -1 ]; then
@@ -674,16 +694,16 @@ parseCommandLine() {
                 fi
                 shift
                 ;;
-            -v|--voltage)
-                printf "%-36s | %-10s | %-10s | %-8s | %-12s | %-12s\n" Name Value Units Status Lower_Limit Upper_Limit
-                check_voltage_bmc_adc
-                cat $SENSORS_FILE
-                if [ $has_error -eq -1 ]; then
-                    printf "\nVoltage sensor abnormal:\n"
-                    cat $ERROR_FILE
-                fi
-                shift
-                ;;
+            # -v|--voltage)
+            #     printf "%-36s | %-10s | %-10s | %-8s | %-12s | %-12s\n" Name Value Units Status Lower_Limit Upper_Limit
+            #     check_voltage_bmc_adc
+            #     cat $SENSORS_FILE
+            #     if [ $has_error -eq -1 ]; then
+            #         printf "\nVoltage sensor abnormal:\n"
+            #         cat $ERROR_FILE
+            #     fi
+            #     shift
+            #     ;;
             -c|--clock)
                 printf "%-36s | %-10s | %-10s | %-8s | %-12s | %-12s\n" Name Value Units Status Lower_Limit Upper_Limit
                 check_clock_sensors
@@ -700,9 +720,9 @@ parseCommandLine() {
                 check_dc_sensors
                 check_fan_sensors
                 check_cpu_temp
-                check_dimm_temp
+                # check_dimm_temp
                 check_temp_sensors
-                check_voltage_bmc_adc
+                # check_voltage_bmc_adc
                 check_clock_sensors
                 cat $SENSORS_FILE
                 if [ $has_error -eq -1 ]; then

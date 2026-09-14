@@ -26,7 +26,7 @@
 
 #define OK 0
 #define ERR -1
-#define NMX70_DRIVER_OK_FLAG  "/run/driver_init_ok"
+#define NMX36_DRIVER_OK_FLAG  "/run/driver_init_ok"
 typedef struct sensor {
     int index;
     char* sensorName;
@@ -40,38 +40,8 @@ sensor_s g_sensor[] = {
     {
         .index = 0,
         .sensorName = "mac_temp0",
-        .path = "/sys/bus/i2c/drivers/tmp401/80-004c/",
-        .node = "temp2_input",
-    },
-    {
-        .index = 1,
-        .sensorName = "mac_temp1",
-        .path = "/sys/bus/i2c/drivers/tmp401/81-004c/",
-        .node = "temp2_input",
-    },
-    {
-        .index = 2,
-        .sensorName = "mac_temp2",
-        .path = "/sys/bus/i2c/drivers/tmp401/82-004c/",
-        .node = "temp2_input",
-    },
-    {
-        .index = 3,
-        .sensorName = "mac_temp3",
-        .path = "/sys/bus/i2c/drivers/tmp401/83-004c/",
-        .node = "temp2_input",
-    },
-    {
-        .index = 4,
-        .sensorName = "mac_temp4",
-        .path = "/sys/bus/i2c/drivers/tmp401/84-004c/",
-        .node = "temp2_input",
-    },
-    {
-        .index = 5,
-        .sensorName = "mac_temp4",
-        .path = "/sys/bus/i2c/drivers/tmp401/85-004c/",
-        .node = "temp2_input",
+        .path = "/sys/bus/i2c/devices/7-001f/",
+        .node = "temp_input",
     },
 };
 
@@ -85,7 +55,7 @@ int getNodeVal(char* nodePath, int* value)
     int val;
     int ret;
     FILE *io = NULL;
-    
+
     io = fopen(nodePath, "r");
     if ( !io ) {
         //debug
@@ -109,7 +79,7 @@ int setNodeVal(char* nodePath, int value)
 {
     int ret;
     FILE *io = NULL;
-    
+
     io = fopen(nodePath, "w");
     if ( !io ) {
         //printf("\r\n debug:fopen fail %s\r\n", node_path);
@@ -136,7 +106,7 @@ int getDeviceHwmon(char* i2cDevPath)
     int hwmIdx = 0;
 
     sprintf(path, "%s/hwmon", i2cDevPath);
-    
+
     io = fopen(path, "r");
     if ( !io ) {
         return ERR;
@@ -172,7 +142,7 @@ int sensorHwmonInit(int sensorId)
 
 
 
-#define NODE_PATH_FMT "/sys/class/hwmon/hwmon%d/%s"
+#define NODE_PATH_FMT "%s/%s"
 #define NODE_PATH_LEN 128
 #define TEMP_DATA_ERR            (0-900000)
 int getTempDefault(int sensorId, int* temp)
@@ -181,8 +151,8 @@ int getTempDefault(int sensorId, int* temp)
     int ret;
     char node[NODE_PATH_LEN] = {0};
     int i;
-    
-    sprintf(node, NODE_PATH_FMT, g_sensor[sensorId].hwmon, g_sensor[sensorId].node);
+
+    sprintf(node, NODE_PATH_FMT, g_sensor[sensorId].path, g_sensor[sensorId].node);
     for (i = 0; i < 3; i++){
         ret = getNodeVal(node, &value);
         if (ret == OK) {
@@ -193,7 +163,7 @@ int getTempDefault(int sensorId, int* temp)
         *temp = TEMP_DATA_ERR;
         return ERR;
     }
-    *temp = value/1000;
+    *temp = value;
     return OK;
 }
 
@@ -230,7 +200,7 @@ int get_max_mac_temp()
     int temps[6] = {0};
     //sensor
     for (i = 0; i < 6; i++) {
-        getTemp(i, &temp);
+        getTemp(0, &temp);
 		temps[i] = temp;
 		max_temp = max_temp < temp? temp:max_temp;
     }
@@ -240,7 +210,7 @@ int get_max_mac_temp()
 
 
 int power_off_switch_board() {
-    system("/usr/local/bin/mac_power_off.sh");
+    system("/usr/local/bin/power.sh sys_pwr_cycle");
 	return OK;
 	//todo
 }
@@ -250,7 +220,7 @@ bool mac_monitor_start()
     int ret;
     int flag;
     char node[NODE_PATH_LEN] = {0};
-    sprintf(node, "%s", NMX70_DRIVER_OK_FLAG);
+    sprintf(node, "%s", NMX36_DRIVER_OK_FLAG);
     while(1) {
         sleep(5);
         ret = getNodeVal(node, &flag);
@@ -275,7 +245,7 @@ int main()
 	int max_temp;
 	int alarm_temp = 105;
     mac_monitor_start();
-	boardInfoInit();
+	//boardInfoInit();
 	while (true) {
 		max_temp = get_max_mac_temp();
 

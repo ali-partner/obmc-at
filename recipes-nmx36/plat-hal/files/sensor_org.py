@@ -73,7 +73,7 @@ class sensor(devicebase):
 
         if namestr == "CPU_TEMP":
             data = output.split("The CPU temperature:", 1)[-1].strip()
-            value = int(data)
+            value = int(float(data))
             return (True, value)
         elif namestr == "SWITCH_TEMP":
             data = output.split("The MAC temperature:", 1)[-1].strip()

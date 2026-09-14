@@ -35,7 +35,7 @@ extern "C" {
 #define FRUID_OFFSET_MULTIPLIER                        8
 #define FRUID_HEADER_OFFSET_PRODUCT_INFO               0x04
 #define FRUID_PRODUCT_OFFSET_SERIAL                    0x58
-#define ACCTON_PATH_FRU_EEPROM_BMC_BOARD    "/sys/bus/i2c/devices/24-0050/eeprom"
+#define ACCTON_PATH_FRU_EEPROM_BMC_BOARD    "/sys/bus/i2c/devices/2-0052/eeprom"
 #define ACCTON_PATH_FRU_EEPROM_BASE_BOARD   "/sys/bus/i2c/devices/24-0051/eeprom"
 #define ACCTON_PATH_FRU_EEPROM_OCM_BOARD    "/sys/bus/i2c/devices/16-0056/eeprom"
 #define ACCTON_PATH_FRU_EEPROM_SWITCH_BOARD "/sys/bus/i2c/devices/32-0050/eeprom"

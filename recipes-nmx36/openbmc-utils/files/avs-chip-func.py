@@ -16,7 +16,7 @@ except ImportError as e:
 def log_info_init():
     log_dir = "/var/log"
     log_file_path = os.path.join(log_dir, "avs_current_monitor.log")
-    
+
     logging.basicConfig(
         level=logging.INFO,
         filename=log_file_path,
@@ -43,21 +43,22 @@ g_store_code_flag = 0
 
 #To Read phase Iout info
 multiphase_iout_info_as42_64s_at  = [
-                         {'name':'SWITCH_C0_VDDC',            'bus':41, 'addr':0x60, 'rail':1, 'ph_cnt':8,  'LowThd':-2, 'HighThd':47},#LOOPA:8相
-                         {'name':'SWITCH_C3_VDDC(0.7V)',      'bus':41, 'addr':0x60, 'rail':2, 'ph_cnt':8,  'LowThd':-2, 'HighThd':45},#LOOPB:8相
-                         {'name':'SWITCH_VDDC',               'bus':40, 'addr':0x62, 'rail':1, 'ph_cnt':10, 'LowThd':-2, 'HighThd':40},#LOOPA:10相
-                         {'name':'SWITCH_HBM_VDD',            'bus':40, 'addr':0x62, 'rail':2, 'ph_cnt':2,  'LowThd':-2, 'HighThd':40},#LOOPB:2相
-                         {'name':'SWITCH_C12_IFG_VDDS',       'bus':43, 'addr':0x64, 'rail':1, 'ph_cnt':4,  'LowThd':-2, 'HighThd':40},#LOOPA:4相
-                         {'name':'SWITCH_IFG_VDDA',           'bus':43, 'addr':0x64, 'rail':2, 'ph_cnt':4,  'LowThd':-2, 'HighThd':35},#LOOPB:4相
-                         {'name':'SWITCH_C03_IFG_VDDS',       'bus':42, 'addr':0x66, 'rail':1, 'ph_cnt':4,  'LowThd':-2, 'HighThd':40},#LOOPA:4相
-                         {'name':'SWITCH_IFG_VDDM',           'bus':42, 'addr':0x66, 'rail':2, 'ph_cnt':2,  'LowThd':-2, 'HighThd':45},#LOOPB:2相
-                         {'name':'VCC3V3_QSFP1',              'bus':44, 'addr':0x68, 'rail':1, 'ph_cnt':4,  'LowThd':-2, 'HighThd':40},#LOOPA:4相
-                         {'name':'VCC3V3_QSFP2',              'bus':45, 'addr':0x6A, 'rail':1, 'ph_cnt':4,  'LowThd':-2, 'HighThd':40},#LOOPA:4相
-                         {'name':'D2D_VDDA',                  'bus':45, 'addr':0x6A, 'rail':2, 'ph_cnt':2,  'LowThd':-2, 'HighThd':40},#LOOPB:2相
-                         {'name':'SWITCH_C2_VDDC',            'bus':46, 'addr':0x6C, 'rail':1, 'ph_cnt':8,  'LowThd':-2, 'HighThd':47},#LOOPA:8相
-                         {'name':'SWITCH_C1_VDDC',            'bus':46, 'addr':0x6C, 'rail':2, 'ph_cnt':8,  'LowThd':-2, 'HighThd':47},#LOOPB:8相
-                         {'name':'VCC3V3_QSFP1(line)',        'bus':57, 'addr':0x70, 'rail':1, 'ph_cnt':3,  'LowThd':-2, 'HighThd':30},#LOOPA:3相
-                         {'name':'VCC3V3_QSFP2(line)',        'bus':57, 'addr':0x70, 'rail':2, 'ph_cnt':3,  'LowThd':-2, 'HighThd':30}]#LOOPB:3相
+                         {'name':'SP6_AVDD_T0_1V05',          'bus':56, 'addr':0x63, 'rail':1, 'ph_cnt':1,  'LowThd':-2, 'HighThd':22},#LOOPA:1相
+                         {'name':'SP6_AVDD_T1_1V05',          'bus':56, 'addr':0x63, 'rail':2, 'ph_cnt':1,  'LowThd':-2, 'HighThd':22},#LOOPB:1相
+                         {'name':'SP6_AVDD_T2_1V05',          'bus':57, 'addr':0x64, 'rail':1, 'ph_cnt':1,  'LowThd':-2, 'HighThd':22},#LOOPA:1相
+                         {'name':'SP6_AVDD_T3_1V05',          'bus':57, 'addr':0x64, 'rail':2, 'ph_cnt':1,  'LowThd':-2, 'HighThd':22},#LOOPB:1相
+                         {'name':'SP6_AVDD_T4_1V05',          'bus':58, 'addr':0x65, 'rail':1, 'ph_cnt':1,  'LowThd':-2, 'HighThd':22},#LOOPA:1相
+                         {'name':'SP6_AVDD_T5_1V05',          'bus':58, 'addr':0x65, 'rail':2, 'ph_cnt':1,  'LowThd':-2, 'HighThd':22},#LOOPB:1相
+                         {'name':'SP6_AVDD_T6_1V05',          'bus':59, 'addr':0x66, 'rail':1, 'ph_cnt':1,  'LowThd':-2, 'HighThd':22},#LOOPA:1相
+                         {'name':'SP6_AVDD_T7_1V05',          'bus':59, 'addr':0x66, 'rail':2, 'ph_cnt':1,  'LowThd':-2, 'HighThd':22},#LOOPB:1相
+                         {'name':'SP6_DVDD_T0_0V7',           'bus':60, 'addr':0x67, 'rail':1, 'ph_cnt':2,  'LowThd':-2, 'HighThd':38},#LOOPA:2相
+                         {'name':'SP6_DVDD_T1_0V7',           'bus':60, 'addr':0x67, 'rail':2, 'ph_cnt':2,  'LowThd':-2, 'HighThd':38},#LOOPB:2相
+                         {'name':'SP6_DVDD_T2_0V7',           'bus':61, 'addr':0x68, 'rail':1, 'ph_cnt':2,  'LowThd':-2, 'HighThd':38},#LOOPA:2相
+                         {'name':'SP6_DVDD_T3_0V7',           'bus':61, 'addr':0x68, 'rail':2, 'ph_cnt':2,  'LowThd':-2, 'HighThd':38},#LOOPB:2相
+                         {'name':'SP6_DVDD_T4_0V7',           'bus':62, 'addr':0x69, 'rail':1, 'ph_cnt':2,  'LowThd':-2, 'HighThd':38},#LOOPA:2相
+                         {'name':'SP6_DVDD_T5_0V7',           'bus':62, 'addr':0x69, 'rail':2, 'ph_cnt':2,  'LowThd':-2, 'HighThd':38},#LOOPB:2相
+                         {'name':'SP6_DVDD_T6_0V7',           'bus':63, 'addr':0x6a, 'rail':1, 'ph_cnt':2,  'LowThd':-2, 'HighThd':38},#LOOPA:2相
+                         {'name':'SP6_DVDD_T7_0V7',           'bus':63, 'addr':0x6a, 'rail':2, 'ph_cnt':2,  'LowThd':-2, 'HighThd':38}]#LOOPB:2相
 
 PRODUCT_CONFIG_MAP = {
     "AS42-64S-AT": multiphase_iout_info_as42_64s_at,
@@ -113,7 +114,7 @@ def drv_pmbus_store_user_code(bus, addr, rail):
         return -1
 
 def pmbus_reg2data_linear11(reg_val):
-    #LINEAR11 
+    #LINEAR11
     reg_value = int(reg_val,16)
     exponent = (reg_value) >> 11
     sign_exponent = 0
@@ -136,8 +137,8 @@ def pmbus_reg2data_linear11(reg_val):
         #val <<= exponent
     #else:
         #val >>= -exponent
-    #reg_value=0xBE40,mantissa=-448,exponent=-9,val=-875. 
-    #reg_value=0xB200,mantissa=512,exponent=-10,val=500. 
+    #reg_value=0xBE40,mantissa=-448,exponent=-9,val=-875.
+    #reg_value=0xB200,mantissa=512,exponent=-10,val=500.
     #reg_value=0xDA08,mantissa=520,exponent=-5,val=16250
     print("pmbus_reg2data_linear11 reg_value=0x%x, sign_exponent=%d, sign_mantissa=%d, val=%d ." % (reg_value, sign_exponent, sign_mantissa, val))
     return(val)
@@ -151,7 +152,7 @@ def hex_to_signed_int(hex_value, bits=16):
 
     sign_bit = (unsigned_value) >> (bits -1)
     if sign_bit == 1:
-        mask = (1 << bits) - 1 
+        mask = (1 << bits) - 1
         signed_value = -((~unsigned_value + 1) & mask)
     else:
         signed_value = unsigned_value
@@ -232,6 +233,43 @@ IPH_LPF_IOUT_ODD =  0x00003FFF
 IPH_LPF_IOUT_EVEN = 0x0FFFC000
 IOUT_VALUE_STEP = 0.021875
 
+
+# READ_CSx 命令地址（Page0 用于 Rail1，Page1 用于 Rail2）
+CS_ADDR_MAP = {
+    1: {  # Rail1
+        1: 0x82,  # CS1_2
+        2: 0x82,
+        3: 0x83,  # CS3_4
+        4: 0x83,
+        5: 0x84,  # CS5_6
+        6: 0x84,
+        7: 0x85,  # CS7_8
+        8: 0x85,
+    },
+    2: {  # Rail2
+        1: 0x85,  # CS1_2
+        2: 0x85,
+        3: 0x86,  # CS3_4
+        4: 0x86,
+        5: 0x87,  # CS5_6
+        6: 0x87,
+    }
+}
+
+def drv_avs_phase_cs_cmd_read(bus, addr, rail, phase):
+    page = rail -1
+    logging.info("bus: %d, addr: %x, rail: %d, phase: %d" % (bus, addr, rail, phase))
+    cs_addr = CS_ADDR_MAP[rail].get(phase)
+    cmd = 'i2cset -f -y %d 0x%x 0x0 %d b;i2cget -f -y %d 0x%x 0x%x w' % (bus, addr, page, bus, addr, cs_addr)
+    ret, output = getstatusoutput(cmd)
+    val = int(output, 16)
+    if phase % 2== 1: # 奇数相位
+        cs_cmd = ((val & 0xFF) * 12.5 / 1000 - 1.23) / (5 * 2.5) #12.5mV/LSB
+    else:  # 偶数相位
+        cs_cmd = (((val << 8) & 0xFF) * 12.5 / 1000 - 1.23) / (5 * 2.5)
+    return cs_cmd
+
+
 def drv_avs_phase_iout_read(bus, addr, rail, count):
     print("drv_avs_phase_iout_read")
     #Firs switch pages based on the rail
@@ -242,80 +280,92 @@ def drv_avs_phase_iout_read(bus, addr, rail, count):
     iph_iout_sum = 0
     regval_32bit = 0
     if(rail == 1):
-        IPH_ADC_LPF_REG_LOOPA = 0x70007460
-        for j in range(int(count)):
-            if((j + 1) % 2 != 0):
-                Reg_Addr = IPH_ADC_LPF_REG_LOOPA + ((j // 2) * 4)
-                #print("Reg_Addr=0x%x )" % (Reg_Addr))
-                addrs_list = []
-                for i in range(4):
-                    byte_value = (Reg_Addr >> (i * 8)) & 0xFF
-                    addrs_list.append(byte_value)
-                
-                address_str = ' '.join(["0x%02x" % b for b in addrs_list])
-                # Read
-                cmd1 = 'i2cset -f -y %d 0x%x 0x0 %d b;i2ctransfer -f -y %d w6@0x%x 0xce 0x04 %s' % (bus, addr, page, bus, addr, address_str)
-                cmd2 = 'i2cset -f -y %d 0x%x 0x0 %d b;i2ctransfer -f -y %d w1@0x%x 0xdf r5' % (bus, addr, page, bus, addr)
-                cmd  = '%s;%s' % (cmd1, cmd2)
-                print(cmd)
-                ret, output = getstatusoutput(cmd)
-                ret_val |= ret
-                # 0x04: 0x00 0x04 0x00 0xba -> 0xba000400
-                arr_info = output.split()[1:]
-                regval_32bit = 0
-                for i, byte in enumerate(arr_info):
-                    regval_32bit |= int(byte, 16) << (i * 8)
-        
-                int_Value = hex_to_signed_int((regval_32bit & (IPH_LPF_IOUT_ODD)), 14)
-                iph_IOUT_Value = int_Value * IOUT_VALUE_STEP
-            else:
-                int_Value = hex_to_signed_int(((regval_32bit & IPH_LPF_IOUT_EVEN) >> 14), 14)
-                iph_IOUT_Value = int_Value * IOUT_VALUE_STEP
-        
-            iph_IOUT_Value = round(iph_IOUT_Value, 2)
-            iph_iout_sum = iph_iout_sum + iph_IOUT_Value
-        
-            print("The(%d-0x%x) get loop%d-phase%d iout=%0.2f, output=%s, regval_32bit=0x%x." % (bus, addr, rail, (j+1), iph_IOUT_Value, output, regval_32bit))
-    elif(rail == 2):
-        if 1 <= count <= 4:
-            IPH_ADC_LPF_REG_LOOPB = 0x7000746C
-        elif 5 <= count <= 6:
-            IPH_ADC_LPF_REG_LOOPB = 0x70007474
-        else:
-            IPH_ADC_LPF_REG_LOOPB = 0x7000747C
-        for j in range(int(count)):
-            if((j + 1) % 2 != 0):
-                Reg_Addr = IPH_ADC_LPF_REG_LOOPB - ((j // 2) * 4)
-                #print("Reg_Addr=0x%x )" % (Reg_Addr))
-                addrs_list = []
-                for i in range(4):
-                    byte_value = (Reg_Addr >> (i * 8)) & 0xFF
-                    addrs_list.append(byte_value)
-                
-                address_str = ' '.join(["0x%02x" % b for b in addrs_list])
-                # Read
-                cmd1 = 'i2cset -f -y %d 0x%x 0x0 %d b;i2ctransfer -f -y %d w6@0x%x 0xce 0x04 %s' % (bus, addr, page, bus, addr, address_str)
-                cmd2 = 'i2cset -f -y %d 0x%x 0x0 %d b;i2ctransfer -f -y %d w1@0x%x 0xdf r5' % (bus, addr, page, bus, addr)
-                cmd  = '%s;%s' % (cmd1, cmd2)
-                print(cmd)
-                ret, output = getstatusoutput(cmd)
-                ret_val |= ret
-                # 0x04: 0x00 0x04 0x00 0xba -> 0xba000400
-                arr_info = output.split()[1:]
-                regval_32bit = 0
-                for i, byte in enumerate(arr_info):
-                    regval_32bit |= int(byte, 16) << (i * 8)
-                int_Value = hex_to_signed_int(((regval_32bit & IPH_LPF_IOUT_EVEN) >> 14), 14)
-                iph_IOUT_Value = int_Value * IOUT_VALUE_STEP
+        # IPH_ADC_LPF_REG_LOOPA = 0x70007460
+        # for j in range(int(count)):
+        #     if((j + 1) % 2 != 0):
+        #         Reg_Addr = IPH_ADC_LPF_REG_LOOPA + ((j // 2) * 4)
+        #         #print("Reg_Addr=0x%x )" % (Reg_Addr))
+        #         addrs_list = []
+        #         for i in range(4):
+        #             byte_value = (Reg_Addr >> (i * 8)) & 0xFF
+        #             addrs_list.append(byte_value)
 
-            else:
-                int_Value = hex_to_signed_int((regval_32bit & (IPH_LPF_IOUT_ODD)), 14)
-                iph_IOUT_Value = int_Value * IOUT_VALUE_STEP
-        
-            iph_IOUT_Value = round(iph_IOUT_Value, 2)
+        #         address_str = ' '.join(["0x%02x" % b for b in addrs_list])
+        #         # Read
+        #         cmd1 = 'i2cset -f -y %d 0x%x 0x0 %d b;i2ctransfer -f -y %d w6@0x%x 0xce 0x04 %s' % (bus, addr, page, bus, addr, address_str)
+        #         cmd2 = 'i2cset -f -y %d 0x%x 0x0 %d b;i2ctransfer -f -y %d w1@0x%x 0xdf r5' % (bus, addr, page, bus, addr)
+        #         cmd  = '%s;%s' % (cmd1, cmd2)
+        #         print(cmd)
+        #         ret, output = getstatusoutput(cmd)
+        #         ret_val |= ret
+        #         # 0x04: 0x00 0x04 0x00 0xba -> 0xba000400
+        #         arr_info = output.split()[1:]
+        #         regval_32bit = 0
+        #         for i, byte in enumerate(arr_info):
+        #             regval_32bit |= int(byte, 16) << (i * 8)
+
+        #         int_Value = hex_to_signed_int((regval_32bit & (IPH_LPF_IOUT_ODD)), 14)
+        #         iph_IOUT_Value = int_Value * IOUT_VALUE_STEP
+        #     else:
+        #         int_Value = hex_to_signed_int(((regval_32bit & IPH_LPF_IOUT_EVEN) >> 14), 14)
+        #         iph_IOUT_Value = int_Value * IOUT_VALUE_STEP
+
+        #     iph_IOUT_Value = round(iph_IOUT_Value, 2)
+        #     iph_iout_sum = iph_iout_sum + iph_IOUT_Value
+
+        #     print("The(%d-0x%x) get loop%d-phase%d iout=%0.2f, output=%s, regval_32bit=0x%x." % (bus, addr, rail, (j+1), iph_IOUT_Value, output, regval_32bit))
+        for ph in range(1, count + 1):
+            phase_iout = drv_avs_phase_cs_cmd_read(bus, addr, rail, ph)
+            print("The(%d-0x%x) get loop%d-phase%d phase_iout=%0.2f." % (bus, addr, rail, ph, phase_iout))
+            iph_IOUT_Value = round(phase_iout, 2)
             iph_iout_sum = iph_iout_sum + iph_IOUT_Value
-        
-            print("The(%d-0x%x) get loop%d-phase%d iout=%0.2f, output=%s, regval_32bit=0x%x." % (bus, addr, rail, (j+1), iph_IOUT_Value, output, regval_32bit))
+            print("The(%d-0x%x) get loop%d-phase%d iout=%0.2f iph_iout_sum=%0.2f." % (bus, addr, rail, ph, iph_IOUT_Value, iph_iout_sum))
+    elif(rail == 2):
+        # if 1 <= count <= 4:
+        #     IPH_ADC_LPF_REG_LOOPB = 0x7000746C
+        # elif 5 <= count <= 6:
+        #     IPH_ADC_LPF_REG_LOOPB = 0x70007474
+        # else:
+        #     IPH_ADC_LPF_REG_LOOPB = 0x7000747C
+        # for j in range(int(count)):
+        #     if((j + 1) % 2 != 0):
+        #         Reg_Addr = IPH_ADC_LPF_REG_LOOPB - ((j // 2) * 4)
+        #         #print("Reg_Addr=0x%x )" % (Reg_Addr))
+        #         addrs_list = []
+        #         for i in range(4):
+        #             byte_value = (Reg_Addr >> (i * 8)) & 0xFF
+        #             addrs_list.append(byte_value)
+
+        #         address_str = ' '.join(["0x%02x" % b for b in addrs_list])
+        #         # Read
+        #         cmd1 = 'i2cset -f -y %d 0x%x 0x0 %d b;i2ctransfer -f -y %d w6@0x%x 0xce 0x04 %s' % (bus, addr, page, bus, addr, address_str)
+        #         cmd2 = 'i2cset -f -y %d 0x%x 0x0 %d b;i2ctransfer -f -y %d w1@0x%x 0xdf r5' % (bus, addr, page, bus, addr)
+        #         cmd  = '%s;%s' % (cmd1, cmd2)
+        #         print(cmd)
+        #         ret, output = getstatusoutput(cmd)
+        #         ret_val |= ret
+        #         # 0x04: 0x00 0x04 0x00 0xba -> 0xba000400
+        #         arr_info = output.split()[1:]
+        #         regval_32bit = 0
+        #         for i, byte in enumerate(arr_info):
+        #             regval_32bit |= int(byte, 16) << (i * 8)
+        #         int_Value = hex_to_signed_int(((regval_32bit & IPH_LPF_IOUT_EVEN) >> 14), 14)
+        #         iph_IOUT_Value = int_Value * IOUT_VALUE_STEP
+
+        #     else:
+        #         int_Value = hex_to_signed_int((regval_32bit & (IPH_LPF_IOUT_ODD)), 14)
+        #         iph_IOUT_Value = int_Value * IOUT_VALUE_STEP
+
+        #     iph_IOUT_Value = round(iph_IOUT_Value, 2)
+        #     iph_iout_sum = iph_iout_sum + iph_IOUT_Value
+
+        #     print("The(%d-0x%x) get loop%d-phase%d iout=%0.2f, output=%s, regval_32bit=0x%x." % (bus, addr, rail, (j+1), iph_IOUT_Value, output, regval_32bit))
+        for ph in range(1, count + 1):
+            phase_iout = drv_avs_phase_cs_cmd_read(bus, addr, rail, ph)
+            print("The(%d-0x%x) get loop%d-phase%d phase_iout=%0.2f." % (bus, addr, rail, ph, phase_iout))
+            iph_IOUT_Value = round(phase_iout, 2)
+            iph_iout_sum = iph_iout_sum + iph_IOUT_Value
+            print("The(%d-0x%x) get loop%d-phase%d iout=%0.2f, iph_iout_sum=%0.2f." % (bus, addr, rail, ph, iph_IOUT_Value, iph_iout_sum))
 
     print("The(%d-0x%x) get iph_iout_sum iout=%0.2f ." % (bus, addr, iph_iout_sum))
     return ret_val
@@ -355,7 +405,7 @@ def drv_avs_phase_iout_read_by_vddname(vdd_name):
                 return -1
             else:
                 print("The %s(%d-0x%x) get phase iout passed." % (name, bus, addr))
-    
+
     if(name_result != 0):
         print("The %s can not find,To get phase iout failed." % (name))
         return -1
@@ -421,87 +471,107 @@ def drv_avs_phase_iout_check(bus, addr, rail, count):
     global g_LowThd
     global g_HighThd
     if(rail == 1):
-        IPH_ADC_LPF_REG_LOOPA = 0x70007460
-        for j in range(int(count)):
-            if((j+1)%2 != 0):
-                Reg_Addr = IPH_ADC_LPF_REG_LOOPA + ((j // 2) * 4)
-                #print("Reg_Addr=0x%x )" % (Reg_Addr))
-                addrs_list = []
-                for i in range(4):
-                    byte_value = (Reg_Addr >> (i * 8)) & 0xFF
-                    addrs_list.append(byte_value)
-                
-                address_str = ' '.join(["0x%02x" % b for b in addrs_list])
-                # Read
-                cmd1 = 'i2cset -f -y %d 0x%x 0x0 %d b;i2ctransfer -f -y %d w6@0x%x 0xce 0x04 %s' % (bus, addr, page, bus, addr, address_str)
-                cmd2 = 'i2cset -f -y %d 0x%x 0x0 %d b;i2ctransfer -f -y %d w1@0x%x 0xdf r5' % (bus, addr, page, bus, addr)
-                cmd = '%s;%s' % (cmd1, cmd2)
-                print(cmd)
-                ret, output = getstatusoutput(cmd)
-                ret_val |= ret
-                # 0x04: 0x00 0x04 0x00 0xba -> 0xba000400
-                arr_info = output.split()[1:]
-                regval_32bit = 0
-                for i, byte in enumerate(arr_info):
-                    regval_32bit |= int(byte, 16) << (i * 8)
-        
-                int_Value = hex_to_signed_int((regval_32bit & (IPH_LPF_IOUT_ODD)), 14)
-                iph_IOUT_Value = int_Value * IOUT_VALUE_STEP
-            else:
-                int_Value = hex_to_signed_int(((regval_32bit & IPH_LPF_IOUT_EVEN) >> 14), 14)
-                iph_IOUT_Value = int_Value * IOUT_VALUE_STEP
-        
-            iph_IOUT_Value = round(iph_IOUT_Value, 2)
+        # IPH_ADC_LPF_REG_LOOPA = 0x70007460
+        # for j in range(int(count)):
+        #     if((j+1)%2 != 0):
+        #         Reg_Addr = IPH_ADC_LPF_REG_LOOPA + ((j // 2) * 4)
+        #         #print("Reg_Addr=0x%x )" % (Reg_Addr))
+        #         addrs_list = []
+        #         for i in range(4):
+        #             byte_value = (Reg_Addr >> (i * 8)) & 0xFF
+        #             addrs_list.append(byte_value)
+
+        #         address_str = ' '.join(["0x%02x" % b for b in addrs_list])
+        #         # Read
+        #         cmd1 = 'i2cset -f -y %d 0x%x 0x0 %d b;i2ctransfer -f -y %d w6@0x%x 0xce 0x04 %s' % (bus, addr, page, bus, addr, address_str)
+        #         cmd2 = 'i2cset -f -y %d 0x%x 0x0 %d b;i2ctransfer -f -y %d w1@0x%x 0xdf r5' % (bus, addr, page, bus, addr)
+        #         cmd = '%s;%s' % (cmd1, cmd2)
+        #         print(cmd)
+        #         ret, output = getstatusoutput(cmd)
+        #         ret_val |= ret
+        #         # 0x04: 0x00 0x04 0x00 0xba -> 0xba000400
+        #         arr_info = output.split()[1:]
+        #         regval_32bit = 0
+        #         for i, byte in enumerate(arr_info):
+        #             regval_32bit |= int(byte, 16) << (i * 8)
+
+        #         int_Value = hex_to_signed_int((regval_32bit & (IPH_LPF_IOUT_ODD)), 14)
+        #         iph_IOUT_Value = int_Value * IOUT_VALUE_STEP
+        #     else:
+        #         int_Value = hex_to_signed_int(((regval_32bit & IPH_LPF_IOUT_EVEN) >> 14), 14)
+        #         iph_IOUT_Value = int_Value * IOUT_VALUE_STEP
+
+        #     iph_IOUT_Value = round(iph_IOUT_Value, 2)
+        #     iph_iout_sum = iph_iout_sum + iph_IOUT_Value
+        #     if ((iph_IOUT_Value < g_LowThd) or (iph_IOUT_Value > g_HighThd)):
+        #         ret_val |= -1
+        #         logging.error("The(%d-0x%x) loop%d-phase%d iout check failed, The IOUT %0.2f outside the range [%d, %d] (output=%s, Reg_value=0x%x)." % (bus, addr, rail, (j+1), iph_IOUT_Value, g_LowThd, g_HighThd, output, regval_32bit))
+        #     else:
+        #         logging.info("The(%d-0x%x) loop%d-phase%d iout check passed, The IOUT %0.2f inside the range [%d, %d] (output=%s, Reg_value=0x%x)." % (bus, addr, rail, (j+1), iph_IOUT_Value, g_LowThd, g_HighThd, output, regval_32bit))
+        for ph in range(1, count + 1):
+            phase_iout = drv_avs_phase_cs_cmd_read(bus, addr, rail, ph)
+            print("The(%d-0x%x) get loop%d-phase%d phase_iout=%0.2f." % (bus, addr, rail, ph, phase_iout))
+            iph_IOUT_Value = round(phase_iout, 2)
             iph_iout_sum = iph_iout_sum + iph_IOUT_Value
             if ((iph_IOUT_Value < g_LowThd) or (iph_IOUT_Value > g_HighThd)):
                 ret_val |= -1
-                logging.error("The(%d-0x%x) loop%d-phase%d iout check failed, The IOUT %0.2f outside the range [%d, %d] (output=%s, Reg_value=0x%x)." % (bus, addr, rail, (j+1), iph_IOUT_Value, g_LowThd, g_HighThd, output, regval_32bit))
+                logging.error("The(%d-0x%x) loop%d-phase%d iout check failed, The IOUT %0.2f outside the range [%d, %d]." % (bus, addr, rail, ph, iph_IOUT_Value, g_LowThd, g_HighThd))
             else:
-                logging.info("The(%d-0x%x) loop%d-phase%d iout check passed, The IOUT %0.2f inside the range [%d, %d] (output=%s, Reg_value=0x%x)." % (bus, addr, rail, (j+1), iph_IOUT_Value, g_LowThd, g_HighThd, output, regval_32bit))
+                logging.info("The(%d-0x%x) loop%d-phase%d iout check passed, The IOUT %0.2f inside the range [%d, %d]." % (bus, addr, rail, ph, iph_IOUT_Value, g_LowThd, g_HighThd))
     elif(rail == 2):
-        if 1 <= count <= 4:
-            IPH_ADC_LPF_REG_LOOPB = 0x7000746C
-        elif 5 <= count <= 6:
-            IPH_ADC_LPF_REG_LOOPB = 0x70007474
-        else:
-            IPH_ADC_LPF_REG_LOOPB = 0x7000747C
+        # if 1 <= count <= 4:
+        #     IPH_ADC_LPF_REG_LOOPB = 0x7000746C
+        # elif 5 <= count <= 6:
+        #     IPH_ADC_LPF_REG_LOOPB = 0x70007474
+        # else:
+        #     IPH_ADC_LPF_REG_LOOPB = 0x7000747C
 
-        for j in range(int(count)):
-            if((j+1)%2 != 0):
-                Reg_Addr = IPH_ADC_LPF_REG_LOOPB - ((j // 2) * 4)
-                #print("Reg_Addr=0x%x )" % (Reg_Addr))
-                addrs_list = []
-                for i in range(4):
-                    byte_value = (Reg_Addr >> (i * 8)) & 0xFF
-                    addrs_list.append(byte_value)
-                
-                address_str = ' '.join(["0x%02x" % b for b in addrs_list])
-                # Read
-                cmd1 = 'i2cset -f -y %d 0x%x 0x0 %d b;i2ctransfer -f -y %d w6@0x%x 0xce 0x04 %s' % (bus, addr, page, bus, addr, address_str)
-                cmd2 = 'i2cset -f -y %d 0x%x 0x0 %d b;i2ctransfer -f -y %d w1@0x%x 0xdf r5' % (bus, addr, page, bus, addr)
-                cmd = '%s;%s' % (cmd1, cmd2)
-                print(cmd)
-                ret, output = getstatusoutput(cmd)
-                ret_val |= ret
-                # 0x04: 0x00 0x04 0x00 0xba -> 0xba000400
-                arr_info = output.split()[1:]
-                regval_32bit = 0
-                for i, byte in enumerate(arr_info):
-                    regval_32bit |= int(byte, 16) << (i * 8)
-                int_Value = hex_to_signed_int(((regval_32bit & IPH_LPF_IOUT_EVEN) >> 14), 14)
-                iph_IOUT_Value = int_Value * IOUT_VALUE_STEP
-            else:
-                int_Value = hex_to_signed_int((regval_32bit & (IPH_LPF_IOUT_ODD)), 14)
-                iph_IOUT_Value = int_Value * IOUT_VALUE_STEP
-        
-            iph_IOUT_Value = round(iph_IOUT_Value, 2)
+        # for j in range(int(count)):
+        #     if((j+1)%2 != 0):
+        #         Reg_Addr = IPH_ADC_LPF_REG_LOOPB - ((j // 2) * 4)
+        #         #print("Reg_Addr=0x%x )" % (Reg_Addr))
+        #         addrs_list = []
+        #         for i in range(4):
+        #             byte_value = (Reg_Addr >> (i * 8)) & 0xFF
+        #             addrs_list.append(byte_value)
+
+        #         address_str = ' '.join(["0x%02x" % b for b in addrs_list])
+        #         # Read
+        #         cmd1 = 'i2cset -f -y %d 0x%x 0x0 %d b;i2ctransfer -f -y %d w6@0x%x 0xce 0x04 %s' % (bus, addr, page, bus, addr, address_str)
+        #         cmd2 = 'i2cset -f -y %d 0x%x 0x0 %d b;i2ctransfer -f -y %d w1@0x%x 0xdf r5' % (bus, addr, page, bus, addr)
+        #         cmd = '%s;%s' % (cmd1, cmd2)
+        #         print(cmd)
+        #         ret, output = getstatusoutput(cmd)
+        #         ret_val |= ret
+        #         # 0x04: 0x00 0x04 0x00 0xba -> 0xba000400
+        #         arr_info = output.split()[1:]
+        #         regval_32bit = 0
+        #         for i, byte in enumerate(arr_info):
+        #             regval_32bit |= int(byte, 16) << (i * 8)
+        #         int_Value = hex_to_signed_int(((regval_32bit & IPH_LPF_IOUT_EVEN) >> 14), 14)
+        #         iph_IOUT_Value = int_Value * IOUT_VALUE_STEP
+        #     else:
+        #         int_Value = hex_to_signed_int((regval_32bit & (IPH_LPF_IOUT_ODD)), 14)
+        #         iph_IOUT_Value = int_Value * IOUT_VALUE_STEP
+
+        #     iph_IOUT_Value = round(iph_IOUT_Value, 2)
+        #     iph_iout_sum = iph_iout_sum + iph_IOUT_Value
+
+        #     if ((iph_IOUT_Value < g_LowThd) or (iph_IOUT_Value > g_HighThd)):
+        #         ret_val |= -1
+        #         logging.error("The(%d-0x%x) loop%d-phase%d iout check failed, The IOUT %0.2f outside the range [%d, %d] (output=%s, Reg_value=0x%x)." % (bus, addr, rail, (j+1), iph_IOUT_Value, g_LowThd, g_HighThd, output, regval_32bit))
+        #     else:
+        #         logging.info("The(%d-0x%x) loop%d-phase%d iout check passed, The IOUT %0.2f inside the range [%d, %d] (output=%s, Reg_value=0x%x)." % (bus, addr, rail, (j+1), iph_IOUT_Value, g_LowThd, g_HighThd, output, regval_32bit))
+        for ph in range(1, count + 1):
+            phase_iout = drv_avs_phase_cs_cmd_read(bus, addr, rail, ph)
+            print("The(%d-0x%x) get loop%d-phase%d phase_iout=%0.2f." % (bus, addr, rail, ph, phase_iout))
+            iph_IOUT_Value = round(phase_iout, 2)
             iph_iout_sum = iph_iout_sum + iph_IOUT_Value
-
             if ((iph_IOUT_Value < g_LowThd) or (iph_IOUT_Value > g_HighThd)):
                 ret_val |= -1
-                logging.error("The(%d-0x%x) loop%d-phase%d iout check failed, The IOUT %0.2f outside the range [%d, %d] (output=%s, Reg_value=0x%x)." % (bus, addr, rail, (j+1), iph_IOUT_Value, g_LowThd, g_HighThd, output, regval_32bit))
+                logging.error("The(%d-0x%x) loop%d-phase%d iout check failed, The IOUT %0.2f outside the range [%d, %d]." % (bus, addr, rail, ph, iph_IOUT_Value, g_LowThd, g_HighThd))
             else:
-                logging.info("The(%d-0x%x) loop%d-phase%d iout check passed, The IOUT %0.2f inside the range [%d, %d] (output=%s, Reg_value=0x%x)." % (bus, addr, rail, (j+1), iph_IOUT_Value, g_LowThd, g_HighThd, output, regval_32bit))
+                logging.info("The(%d-0x%x) loop%d-phase%d iout check passed, The IOUT %0.2f inside the range [%d, %d]." % (bus, addr, rail, ph, iph_IOUT_Value, g_LowThd, g_HighThd))
     logging.info("The(%d-0x%x) get iph_iout_sum: %0.2f." % (bus, addr, iph_iout_sum))
     return ret_val
 
@@ -528,7 +598,7 @@ def drv_avs_phase_iout_check_by_vddname(vdd_name):
                 return -1
             else:
                 print("The %s(%d-0x%x) check phase iout passed." % (name, bus, addr))
-    
+
     if(name_result != 0):
         print("The %s can not find,To check phase iout failed." % (name))
         return -1
@@ -601,7 +671,7 @@ def drv_avs_phase_iout_check_all():
 #MFR_COMMON_FAULT_STATUS1
 MFR_COMMON_FAULT_STATUS1 = 0x000000C7
 FAULTED_PHASE_MASK = 0xFFFFFFFF
-#i2cset -y -f 42 0x64 0x00 0x00;i2ctransfer -f -y 42 w1@0x64 0xc7 r5 
+#i2cset -y -f 42 0x64 0x00 0x00;i2ctransfer -f -y 42 w1@0x64 0xc7 r5
 #20250612 need modify
 def drv_avs_check_fault(bus, addr, rail):
     print("drv_avs_check_fault")
@@ -645,7 +715,7 @@ def drv_avs_check_fault_by_vddname(vdd_name):
                 return -1
             else:
                 print("The %s(%d-0x%x) check faulted phase passed." % (name, bus, addr))
-    
+
     if(name_result != 0):
         print("The %s can not find,To check faulted phase failed." % (name))
         return -1
@@ -730,7 +800,7 @@ def drv_enable_mon_fault_mask(bus, addr, rail):
             byte_value = (regval_wr_32bit >> (i * 8)) & 0xFF
             regval_list.append(byte_value)
         regval_str = ' '.join(["0x%02x" % b for b in regval_list])
-        
+
         # Write
         cmd1 = 'i2cset -f -y %d 0x%x 0x0 %d b;usleep 500;i2ctransfer -f -y %d w6@0x%x 0xce 0x04 %s;usleep 2000' % (bus, addr, page, bus, addr, address_str)
         cmd2 = 'i2cset -f -y %d 0x%x 0x0 %d b;usleep 500;i2ctransfer -f -y %d w6@0x%x 0xde 0x04 %s;usleep 2000' % (bus, addr, page, bus, addr, regval_str)
@@ -780,7 +850,7 @@ def drv_enable_ips_ocp_fault_mask(bus, addr, rail):
             byte_value = (regval_wr_32bit >> (i * 8)) & 0xFF
             regval_list.append(byte_value)
         regval_str = ' '.join(["0x%02x" % b for b in regval_list])
-        
+
         # Write
         cmd1 = 'i2cset -f -y %d 0x%x 0x0 %d b;usleep 500;i2ctransfer -f -y %d w6@0x%x 0xce 0x04 %s;usleep 2000' % (bus, addr, page, bus, addr, address_str)
         cmd2 = 'i2cset -f -y %d 0x%x 0x0 %d b;usleep 500;i2ctransfer -f -y %d w6@0x%x 0xde 0x04 %s;usleep 2000' % (bus, addr, page, bus, addr, regval_str)
@@ -834,7 +904,7 @@ def drv_disable_mon_fault_mask(bus, addr, rail):
     if(0 == ret):
         for i, byte in enumerate(arr_info):
             regval_32bit |= int(byte, 16) << (i * 8)
-        
+
         if(MON_MASK != (regval_32bit & MON_MASK)):
             # 0x8a000400 -> 0xba000400
             #regval_wr_32bit = regval_32bit | MON_MASK
@@ -846,7 +916,7 @@ def drv_disable_mon_fault_mask(bus, addr, rail):
                 byte_value = (regval_wr_32bit >> (i * 8)) & 0xFF
                 regval_list.append(byte_value)
             regval_str = ' '.join(["0x%02x" % b for b in regval_list])
-            
+
             # Write
             cmd1 = 'i2cset -f -y %d 0x%x 0x0 %d b;usleep 500;i2ctransfer -f -y %d w6@0x%x 0xce 0x04 %s;usleep 2000' % (bus, addr, page, bus, addr, address_str)
             cmd2 = 'i2cset -f -y %d 0x%x 0x0 %d b;usleep 500;i2ctransfer -f -y %d w6@0x%x 0xde 0x04 %s;usleep 2000' % (bus, addr, page, bus, addr, regval_str)
@@ -897,7 +967,7 @@ def drv_disable_ips_ocp_fault_mask(bus, addr, rail):
                 byte_value = (regval_wr_32bit >> (i * 8)) & 0xFF
                 regval_list.append(byte_value)
             regval_str = ' '.join(["0x%02x" % b for b in regval_list])
-            
+
             # Write
             cmd1 = 'i2cset -f -y %d 0x%x 0x0 %d b;usleep 500;i2ctransfer -f -y %d w6@0x%x 0xce 0x04 %s;usleep 2000' % (bus, addr, page, bus, addr, address_str)
             cmd2 = 'i2cset -f -y %d 0x%x 0x0 %d b;usleep 500;i2ctransfer -f -y %d w6@0x%x 0xde 0x04 %s;usleep 2000' % (bus, addr, page, bus, addr, regval_str)
@@ -940,7 +1010,7 @@ def drv_avs_enable_fault_mask_by_vddname(vdd_name):
                 return -1
             else:
                 print("The %s(%d-0x%x) enable fault passed." % (name, bus, addr))
-    
+
     if(name_result != 0):
         print("The %s can not find,To enable fault failed." % (name))
         return -1
@@ -982,7 +1052,7 @@ def drv_avs_disable_fault_mask_by_vddname(vdd_name):
                 return -1
             else:
                 print("The %s(%d-0x%x) disable fault passed." % (name, bus, addr))
-    
+
     if(name_result != 0):
         print("The %s can not find,To disable fault failed." % (name))
         return -1
@@ -1087,7 +1157,7 @@ def drv_avs_setup_disable_fault_mask_by_vddname(vdd_name):
                 return -1
             else:
                 print("The %s(%d-0x%x) setup disable fault passed." % (name, bus, addr))
-    
+
     if(name_result != 0):
         print("The %s can not find,To setup disable fault failed." % (name))
         return -1
@@ -1151,7 +1221,7 @@ def drv_avs_get_iout_oc_fault_limit_by_vddname(vdd_name):
                 return -1
             else:
                 print("The %s(%d-0x%x) get iout_oc_fault_limit passed." % (name, bus, addr))
-    
+
     if(name_result != 0):
         print("The %s can not find,To get iout_oc_fault_limit failed." % (name))
         return -1
@@ -1271,7 +1341,7 @@ def drv_avs_fault_status_by_vddname(vdd_name):
                 return -1
             else:
                 print("The %s(%d-0x%x) get fault status passed." % (name, bus, addr))
-    
+
     if(name_result != 0):
         print("The %s can not find,To get fault status failed." % (name))
         return -1
@@ -1321,11 +1391,11 @@ def drv_platform_service_opt(opt):
 def drv_avs_chip_func_usage():
     print("Usage: ")
     print("./avs-chip-func.py read/check <VDD_Name/all/singlephase/multiphase>")
-    print("./avs-chip-func.py disable_fault/enable_fault/check_fault/get_fault_status/setup_disable_fault/get_iout_value <VDD_Name/all>")
+    # print("./avs-chip-func.py disable_fault/enable_fault/check_fault/get_fault_status/setup_disable_fault/get_iout_value <VDD_Name/all>")
+    print("./avs-chip-func.py get_iout_value <VDD_Name/all>")
     print("The VDD name:")
-    print("VDD_PVS_MBIN/DVDD_CVB/VDD_PVS_MBIN_TILE_0/DVDD_CVB_TILE_0/VDD_PVS_MBIN_TILE_1/DVDD_CVB_TILE_1/VDD_PVS_MBIN_TILE_2/DVDD_CVB_TILE_2/VDD_PVS_MBIN_TILE_3")
-    print("DVDD_CVB_TILE_3/VDD_PVS_MBIN_TILE_4/DVDD_CVB_TILE_4/VDD_PVS_MBIN_TILE_5/DVDD_CVB_TILE_5/VDD_PVS_MBIN_TILE_6/DVDD_CVB_TILE_6/VDD_PVS_MBIN_TILE_7/DVDD_CVB_TILE_7")
-    print("VDDSCC/HVDD_T03/HVDD_T47")
+    print("SP6_AVDD_T0_1V05/SP6_AVDD_T1_1V05/SP6_AVDD_T2_1V05/SP6_AVDD_T3_1V05/SP6_AVDD_T4_1V05/SP6_AVDD_T5_1V05/SP6_AVDD_T6_1V05/SP6_AVDD_T7_1V05")
+    print("SP6_DVDD_T0_0V7/SP6_DVDD_T1_0V7/SP6_DVDD_T2_0V7/SP6_DVDD_T3_0V7/SP6_DVDD_T4_0V7/SP6_DVDD_T5_0V7/SP6_DVDD_T6_0V7/SP6_DVDD_T7_0V7")
     return 0
 
 def main(argv):
@@ -1362,33 +1432,33 @@ def main(argv):
             drv_avs_phase_iout_check_multiphase()
         else:
             drv_avs_phase_iout_check_by_vddname(vdd_name)
-    elif (Operation == 'check_fault'):
-        if (vdd_name == 'all'):
-            drv_avs_check_fault_all()
-        else:
-            drv_avs_check_fault_by_vddname(vdd_name)
-    elif (Operation == 'disable_fault'):
-        drv_platform_service_opt(0)
-        if (vdd_name == 'all'):
-            drv_avs_disable_fault_mask_all()
-        else:
-            drv_avs_disable_fault_mask_by_vddname(vdd_name)
-    elif (Operation == 'enable_fault'):
-        if (vdd_name == 'all'):
-            drv_avs_enable_fault_mask_all()
-        else:
-            drv_avs_enable_fault_mask_by_vddname(vdd_name)
-        drv_platform_service_opt(1)
-    elif (Operation == 'get_fault_status'):
-        if (vdd_name == 'all'):
-            drv_avs_fault_status_all()
-        else:
-            drv_avs_fault_status_by_vddname(vdd_name)
-    elif (Operation == 'setup_disable_fault'):
-        if (vdd_name == 'all'):
-            drv_avs_setup_disable_fault_mask_all()
-        else:
-            drv_avs_setup_disable_fault_mask_by_vddname(vdd_name)
+    # elif (Operation == 'check_fault'):
+    #     if (vdd_name == 'all'):
+    #         drv_avs_check_fault_all()
+    #     else:
+    #         drv_avs_check_fault_by_vddname(vdd_name)
+    # elif (Operation == 'disable_fault'):
+    #     drv_platform_service_opt(0)
+    #     if (vdd_name == 'all'):
+    #         drv_avs_disable_fault_mask_all()
+    #     else:
+    #         drv_avs_disable_fault_mask_by_vddname(vdd_name)
+    # elif (Operation == 'enable_fault'):
+    #     if (vdd_name == 'all'):
+    #         drv_avs_enable_fault_mask_all()
+    #     else:
+    #         drv_avs_enable_fault_mask_by_vddname(vdd_name)
+    #     drv_platform_service_opt(1)
+    # elif (Operation == 'get_fault_status'):
+    #     if (vdd_name == 'all'):
+    #         drv_avs_fault_status_all()
+    #     else:
+    #         drv_avs_fault_status_by_vddname(vdd_name)
+    # elif (Operation == 'setup_disable_fault'):
+    #     if (vdd_name == 'all'):
+    #         drv_avs_setup_disable_fault_mask_all()
+    #     else:
+    #         drv_avs_setup_disable_fault_mask_by_vddname(vdd_name)
     elif (Operation == 'get_iout_value'):
         if (vdd_name == 'all'):
             drv_avs_get_iout_oc_fault_limit_all()

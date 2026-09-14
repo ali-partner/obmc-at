@@ -2,7 +2,7 @@
 
 PROGRAM_TITLE=`basename $0`
 
-FLASH_SIZE_STR="04000000"
+FLASH_SIZE_STR="08000000"
 
 usage() {
     echo "Usage: diag_flash_info.sh"

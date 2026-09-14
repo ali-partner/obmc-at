@@ -17,6 +17,7 @@ SRC_URI:append = " \
     file://dts/aspeed-evb-flash1-layout-128.dtsi \
     file://dts/aspeed-e2m-ic.h \
     file://patches/0001-add-hwmon-driver.patch \
+    file://patches/0002-add-peci-legacy.patch \
     file://drivers/i2c_dev_sysfs.h \
     file://drivers/i2c_dev_sysfs.c \
     file://drivers/basecpld.c \
@@ -52,11 +53,9 @@ SRC_URI:append = " \
     file://drivers/pinctrl/pinctrl-aspeed.h \
     file://drivers/pinctrl/pinmux-aspeed.c \
     file://drivers/pinctrl/pinmux-aspeed.h \
-    file://drivers/peci/cpu.c \
-    file://drivers/peci/core.c \
-    file://drivers/peci/device.c \
-    file://drivers/peci/request.c \
-    file://drivers/peci/peci-aspeed.c \
+    file://drivers/peci/peci-ioctl.h \
+    file://drivers/peci/peci-legacy.h \
+    file://drivers/peci-legacy \
     file://drivers/usb/gadget/core.c \
     file://drivers/usb/gadget/dev.c \
     file://drivers/usb/gadget/epn.c \
@@ -93,12 +92,30 @@ SRC_URI:append = " \
     file://drivers/reset/reset-aspeed.c \
     file://drivers/mmc/sdhci-of-aspeed.c \
     file://drivers/i2c/i2c-mux-pca954x.c \
+    file://drivers/spi-nor/core.c \
+    file://drivers/spi-nor/core.h \
+    file://drivers/spi-nor/debugfs.c \
+    file://drivers/spi-nor/gigadevice.c \
+    file://drivers/spi-nor/macronix.c \
+    file://drivers/spi-nor/sfdp.c \
+    file://drivers/spi-nor/sfdp.h \
+    file://drivers/spi-nor/sst.c \
+    file://drivers/spi-nor/swp.c \
+    file://drivers/spi-nor/winbond.c \
+    file://drivers/spi-nor/spi-nor.h \
+    file://drivers/adc/aspeed_adc.c \
 "
 
 do_patch:append () {
     install -D ${UNPACKDIR}/drivers/soc/Kconfig ${STAGING_KERNEL_DIR}/drivers/soc/aspeed/Kconfig
     install -D ${UNPACKDIR}/drivers/phy/Kconfig ${STAGING_KERNEL_DIR}/drivers/phy/Kconfig
     install -D ${UNPACKDIR}/drivers/phy/aspeed/Kconfig ${STAGING_KERNEL_DIR}/drivers/phy/aspeed/Kconfig
+}
+
+do_kernel_configme:prepend () {
+    cp -rf ${UNPACKDIR}/drivers/peci/peci-ioctl.h ${STAGING_KERNEL_DIR}/include/uapi/linux/peci-ioctl.h
+    cp -rf ${UNPACKDIR}/drivers/peci/peci-legacy.h  ${STAGING_KERNEL_DIR}/include/linux/peci-legacy.h
+    cp -rf ${UNPACKDIR}/drivers/peci-legacy ${STAGING_KERNEL_DIR}/drivers/peci-legacy
 }
 
 do_compile:prepend () {
@@ -145,11 +162,9 @@ do_compile:prepend () {
     cp -rf ${UNPACKDIR}/drivers/pinctrl/pinctrl-aspeed.h ${STAGING_KERNEL_DIR}/drivers/pinctrl/aspeed/pinctrl-aspeed.h
     cp -rf ${UNPACKDIR}/drivers/pinctrl/pinmux-aspeed.c ${STAGING_KERNEL_DIR}/drivers/pinctrl/aspeed/pinmux-aspeed.c
     cp -rf ${UNPACKDIR}/drivers/pinctrl/pinmux-aspeed.h ${STAGING_KERNEL_DIR}/drivers/pinctrl/aspeed/pinmux-aspeed.h
-    cp -rf ${UNPACKDIR}/drivers/peci/cpu.c ${STAGING_KERNEL_DIR}/drivers/peci/cpu.c
-    cp -rf ${UNPACKDIR}/drivers/peci/core.c ${STAGING_KERNEL_DIR}/drivers/peci/core.c
-    cp -rf ${UNPACKDIR}/drivers/peci/device.c ${STAGING_KERNEL_DIR}/drivers/peci/device.c
-    cp -rf ${UNPACKDIR}/drivers/peci/request.c ${STAGING_KERNEL_DIR}/drivers/peci/request.c
-    cp -rf ${UNPACKDIR}/drivers/peci/peci-aspeed.c ${STAGING_KERNEL_DIR}/drivers/peci/controller/peci-aspeed.c
+    cp -rf ${UNPACKDIR}/drivers/peci/peci-ioctl.h ${STAGING_KERNEL_DIR}/include/uapi/linux/peci-ioctl.h
+    cp -rf ${UNPACKDIR}/drivers/peci/peci-legacy.h  ${STAGING_KERNEL_DIR}/include/linux/peci-legacy.h
+    cp -rf ${UNPACKDIR}/drivers/peci-legacy ${STAGING_KERNEL_DIR}/drivers/peci-legacy
     cp -rf ${UNPACKDIR}/drivers/usb/gadget/core.c ${STAGING_KERNEL_DIR}/drivers/usb/gadget/udc/aspeed-vhub/core.c
     cp -rf ${UNPACKDIR}/drivers/usb/gadget/dev.c ${STAGING_KERNEL_DIR}/drivers/usb/gadget/udc/aspeed-vhub/dev.c
     cp -rf ${UNPACKDIR}/drivers/usb/gadget/epn.c ${STAGING_KERNEL_DIR}/drivers/usb/gadget/udc/aspeed-vhub/epn.c
@@ -183,4 +198,16 @@ do_compile:prepend () {
     cp -rf ${UNPACKDIR}/drivers/reset/reset-aspeed.c ${STAGING_KERNEL_DIR}/drivers/reset/reset-aspeed.c
     cp -rf ${UNPACKDIR}/drivers/mmc/sdhci-of-aspeed.c ${STAGING_KERNEL_DIR}/drivers/mmc/host/sdhci-of-aspeed.c
     cp -rf ${UNPACKDIR}/drivers/i2c/i2c-mux-pca954x.c ${STAGING_KERNEL_DIR}/drivers/i2c/muxes/i2c-mux-pca954x.c
+    cp -rf ${UNPACKDIR}/drivers/spi-nor/core.c ${STAGING_KERNEL_DIR}/drivers/mtd/spi-nor/core.c
+    cp -rf ${UNPACKDIR}/drivers/spi-nor/core.h ${STAGING_KERNEL_DIR}/drivers/mtd/spi-nor/core.h
+    cp -rf ${UNPACKDIR}/drivers/spi-nor/debugfs.c ${STAGING_KERNEL_DIR}/drivers/mtd/spi-nor/debugfs.c
+    cp -rf ${UNPACKDIR}/drivers/spi-nor/gigadevice.c ${STAGING_KERNEL_DIR}/drivers/mtd/spi-nor/gigadevice.c
+    cp -rf ${UNPACKDIR}/drivers/spi-nor/macronix.c ${STAGING_KERNEL_DIR}/drivers/mtd/spi-nor/macronix.c
+    cp -rf ${UNPACKDIR}/drivers/spi-nor/sfdp.c ${STAGING_KERNEL_DIR}/drivers/mtd/spi-nor/sfdp.c
+    cp -rf ${UNPACKDIR}/drivers/spi-nor/sfdp.h ${STAGING_KERNEL_DIR}/drivers/mtd/spi-nor/sfdp.h
+    cp -rf ${UNPACKDIR}/drivers/spi-nor/sst.c ${STAGING_KERNEL_DIR}/drivers/mtd/spi-nor/sst.c
+    cp -rf ${UNPACKDIR}/drivers/spi-nor/swp.c ${STAGING_KERNEL_DIR}/drivers/mtd/spi-nor/swp.c
+    cp -rf ${UNPACKDIR}/drivers/spi-nor/winbond.c ${STAGING_KERNEL_DIR}/drivers/mtd/spi-nor/winbond.c
+    cp -rf ${UNPACKDIR}/drivers/spi-nor/spi-nor.h ${STAGING_KERNEL_DIR}/include/linux/mtd/spi-nor.h
+    cp -rf ${UNPACKDIR}/drivers/adc/aspeed_adc.c ${STAGING_KERNEL_DIR}/drivers/iio/adc/aspeed_adc.c
 }

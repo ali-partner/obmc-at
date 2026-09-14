@@ -31,6 +31,7 @@
 # MOUNT_POINT="/mnt/data1"
 MOUNT_POINT="/var/volatile/log"
 DATA_BLOCK_DEV="/dev/mmcblk0"
+VAR_LOG_DIR="/var/log"
 
 # Check eMMC exist or not, if exist and eMMC can not mount.
 # That means eMMC without filesystem.
@@ -43,6 +44,15 @@ function do_mount()
         echo "mmcblk0 partition found on $DATA_BLOCK_DEV, mounting to $MOUNT_POINT."
         [ -d $MOUNT_POINT ] || mkdir -p $MOUNT_POINT
         mount -t ext4 $DATA_BLOCK_DEV $MOUNT_POINT 2> /dev/null
+        if [ -L $VAR_LOG_DIR ]; then
+            echo "/var/log soft link is existing"
+        elif [ -d $VAR_LOG_DIR ]; then
+            echo "/var/log directory is existing"
+            rm -rf /var/log
+        else
+            echo "/var/log directory is not existing"
+        fi
+        ln -sfn /var/volatile/log /var/log
     
         if [ $? -ne 0 ]; then
             echo "Mount failed; formatting EXT4 filesystem on mmcblk0 partition."

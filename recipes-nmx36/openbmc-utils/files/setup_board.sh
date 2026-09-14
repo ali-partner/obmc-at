@@ -52,7 +52,8 @@ echo "Set usb0 static MAC..."
 ip link set usb0 down
 ip link set dev usb0 address 02:00:00:00:00:01
 ip addr add 199.168.1.1/24 dev usb0
-ip addr add fe80::1/64 dev usb0
+# ip addr add fe80::1/64 dev usb0
+ip addr add fe80::ff:fe00:1/64 dev usb0
 ip link set usb0 up
 
 #board_rev=$(wedge_board_rev)

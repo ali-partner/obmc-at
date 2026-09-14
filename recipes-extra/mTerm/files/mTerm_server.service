@@ -23,7 +23,7 @@ After=init-platform.service
 
 [Service]
 EnvironmentFile=/etc/device/baudrate.conf
-ExecStart=/usr/local/bin/mTerm_server ttyS1 /dev/ttyS1 $ttyS1_baudrate
+ExecStart=/usr/local/bin/mTerm_server ttyS0 /dev/ttyS0 $ttyS0_baudrate
 Restart=always
 RestartSec=30
 

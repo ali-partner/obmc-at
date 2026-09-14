@@ -35,18 +35,18 @@ do_get_fan_speed_by_fan_index()
 
     echo "index: $index"
     if [[ "$fan_board_type" == "0" ]]; then
-        if [[ "$1" -ge 1 ]] && [[ "$1" -le 4 ]]; then
-            local_index=$index
+        if (( index % 2 == 1 )); then
+            local_index=$(((index + 1) / 2))
             FANCPLD_SYSFS_DIR=$FAN1CPLD_SYSFS_DIR
-        elif [[ "$1" -ge 5 ]] && [[ "$1" -le 8 ]]; then
-            local_index=$((index - 4))
+        else
+            local_index=$((index / 2))
             FANCPLD_SYSFS_DIR=$FAN2CPLD_SYSFS_DIR
         fi
     elif [[ "$fan_board_type" == "1" ]]; then
         local_index=$index
         FANCPLD_SYSFS_DIR=$FAN2CPLD_SYSFS_DIR
     fi
-    
+
     speed1=`cat ${FANCPLD_SYSFS_DIR}/fan${local_index}_speed_1`
     speed2=`cat ${FANCPLD_SYSFS_DIR}/fan${local_index}_speed_2`
     echo "FAN$index speed1: $speed1"
@@ -57,10 +57,8 @@ do_get_fan_speed()
 {
     echo "get fan speed:"
     if [[ "$fan_board_type" == "0" ]]; then
-        echo "fan_board_type == 0"
         if [[ "$1" == "all" ]]; then
             # if [[ ${FAN_BOARD_TYPE_SYSFS} == 0 ]]
-            echo "command is all"
             do_get_fan_speed_by_fan_index 1
             do_get_fan_speed_by_fan_index 2
             do_get_fan_speed_by_fan_index 3
@@ -70,24 +68,20 @@ do_get_fan_speed()
             do_get_fan_speed_by_fan_index 7
             do_get_fan_speed_by_fan_index 8
         elif [[ "$1" -ge 1 ]] && [[ "$1" -le 8 ]]; then
-            echo "command is $1"
             do_get_fan_speed_by_fan_index $1
         else
             usage
             exit -1
         fi
     elif [[ "$fan_board_type" == "1" ]]; then
-        echo "fan_board_type == 1"
         if [[ "$1" == "all" ]]; then
             # if [[ ${FAN_BOARD_TYPE_SYSFS} == 0 ]]
-            echo "command is all"
             do_get_fan_speed_by_fan_index 1
             do_get_fan_speed_by_fan_index 2
             do_get_fan_speed_by_fan_index 3
             do_get_fan_speed_by_fan_index 4
             do_get_fan_speed_by_fan_index 5
         elif [[ "$1" -ge 1 ]] && [[ "$1" -le 5 ]]; then
-            echo "command is $1"
             do_get_fan_speed_by_fan_index $1
         else
             usage
@@ -103,11 +97,11 @@ do_get_fan_pwm_by_fan_index()
     FANCPLD_SYSFS_DIR=""
 
     if [[ "$fan_board_type" == "0" ]]; then
-        if [[ "$1" -ge 1 ]] && [[ "$1" -le 4 ]]; then
-            local_index=$index
+        if (( index % 2 == 1 )); then
+            local_index=$(((index + 1) / 2))
             FANCPLD_SYSFS_DIR=$FAN1CPLD_SYSFS_DIR
-        elif [[ "$1" -ge 5 ]] && [[ "$1" -le 8 ]]; then
-            local_index=$((index - 4))
+        else
+            local_index=$((index / 2))
             FANCPLD_SYSFS_DIR=$FAN2CPLD_SYSFS_DIR
         fi
     elif [[ "$fan_board_type" == "1" ]]; then
@@ -161,11 +155,11 @@ do_get_fan_status_by_fan_index()
     FANCPLD_SYSFS_DIR=""
 
     if [[ "$fan_board_type" == "0" ]]; then
-        if [[ "$1" -ge 1 ]] && [[ "$1" -le 4 ]]; then
-            local_index=$index
+        if (( index % 2 == 1 )); then
+            local_index=$(((index + 1) / 2))
             FANCPLD_SYSFS_DIR=$FAN1CPLD_SYSFS_DIR
-        elif [[ "$1" -ge 5 ]] && [[ "$1" -le 8 ]]; then
-            local_index=$((index - 4))
+        else
+            local_index=$((index / 2))
             FANCPLD_SYSFS_DIR=$FAN2CPLD_SYSFS_DIR
         fi
     elif [[ "$fan_board_type" == "1" ]]; then
@@ -225,11 +219,11 @@ do_get_fan_direction_by_fan_index()
     FANCPLD_SYSFS_DIR=""
 
     if [[ "$fan_board_type" == "0" ]]; then
-        if [[ "$1" -ge 1 ]] && [[ "$1" -le 4 ]]; then
-            local_index=$index
+        if (( index % 2 == 1 )); then
+            local_index=$(((index + 1) / 2))
             FANCPLD_SYSFS_DIR=$FAN1CPLD_SYSFS_DIR
-        elif [[ "$1" -ge 5 ]] && [[ "$1" -le 8 ]]; then
-            local_index=$((index - 4))
+        else
+            local_index=$((index / 2))
             FANCPLD_SYSFS_DIR=$FAN2CPLD_SYSFS_DIR
         fi
     elif [[ "$fan_board_type" == "1" ]]; then
@@ -288,11 +282,11 @@ do_get_fan_powergood_by_fan_index()
     FANCPLD_SYSFS_DIR=""
 
     if [[ "$fan_board_type" == "0" ]]; then
-        if [[ "$1" -ge 1 ]] && [[ "$1" -le 4 ]]; then
-            local_index=$index
+        if (( index % 2 == 1 )); then
+            local_index=$(((index + 1) / 2))
             FANCPLD_SYSFS_DIR=$FAN1CPLD_SYSFS_DIR
-        elif [[ "$1" -ge 5 ]] && [[ "$1" -le 8 ]]; then
-            local_index=$((index - 4))
+        else
+            local_index=$((index / 2))
             FANCPLD_SYSFS_DIR=$FAN2CPLD_SYSFS_DIR
         fi
     elif [[ "$fan_board_type" == "1" ]]; then
@@ -352,11 +346,11 @@ do_set_fan_pwm_by_fan_index()
     FANCPLD_SYSFS_DIR=""
 
     if [[ "$fan_board_type" == "0" ]]; then
-        if [[ "$1" -ge 1 ]] && [[ "$1" -le 4 ]]; then
-            local_index=$index
+        if (( index % 2 == 1 )); then
+            local_index=$(((index + 1) / 2))
             FANCPLD_SYSFS_DIR=$FAN1CPLD_SYSFS_DIR
-        elif [[ "$1" -ge 5 ]] && [[ "$1" -le 8 ]]; then
-            local_index=$((index - 4))
+        else
+            local_index=$((index / 2))
             FANCPLD_SYSFS_DIR=$FAN2CPLD_SYSFS_DIR
         fi
     elif [[ "$fan_board_type" == "1" ]]; then

@@ -35,7 +35,7 @@
 //#define DATA_MAX_BYTES 16384
 
 typedef enum {
-    CS      = 644,  /* AST2700 GPIOP0 */
+    CS      = 650,  /* AST2700 GPIOP6 */
     CLK     = 645,  /* AST2700 GPIOP1 */
     MOSI    = 646,  /* AST2700 GPIOP2 */
     MISO    = 647   /* AST2700 GPIOP3 */
@@ -99,7 +99,7 @@ program_fpga_flash(const char *file_path) {
     return ENOMEM;
   }
   memset(data_str,0,6*DATA_MAX_BYTES);
-  
+
   cmd_str = (char *) malloc(6*DATA_MAX_BYTES);
   if (!cmd_str) {
     FPGA_BEBUG("The cmd_str malloc error.");
@@ -108,7 +108,7 @@ program_fpga_flash(const char *file_path) {
     return ENOMEM;
   }
   memset(cmd_str,0,6*DATA_MAX_BYTES);
-  
+
   cmd_str_1 = (char *) malloc(DATA_LENGTH);
   if (!cmd_str_1) {
     FPGA_BEBUG("The cmd_str_1 malloc error.");
@@ -135,7 +135,7 @@ program_fpga_flash(const char *file_path) {
         }
         //printf("cmd_str_1 cammand:\n%s\n",cmd_str_1);
         memset(cmd_str_1,0,DATA_LENGTH);
-        
+
 		//write command(1Byte)+ Address(3Byte) + write data
 		cnt = ((byte_index + 1) + 1 + 3) * 8;
 		snprintf(cmd_str_1, DATA_LENGTH, "spi-bb -s %d -S low -c %d -C low -o %d -O rising -i %d -I falling -w %d 0x02 %d %d 00 ", CS, CLK, MOSI, MISO, cnt, k, j);
@@ -166,7 +166,7 @@ program_fpga_flash(const char *file_path) {
 
 static void
 print_usage(const char *name) {
-  printf("Usage: %s <file_path>\n", name);  
+  printf("Usage: %s <file_path>\n", name);
 }
 
 int
@@ -179,7 +179,7 @@ main(int argc, const char *argv[]) {
     print_usage(argv[0]);
 	exit(EXIT_FAILURE);
   }
-  
+
   pid_file = open("/var/run/fpgaupdate-spi.pid", O_CREAT | O_RDWR, 0666);
   if(flock(pid_file, LOCK_EX | LOCK_NB) && (errno == EWOULDBLOCK)) {
     printf("Another fpgaupdate-spi instance is running...\n");
@@ -189,8 +189,8 @@ main(int argc, const char *argv[]) {
   ret = program_fpga_flash(argv[1]);
   if (ret) {
     ERR_PRINT("Program FPGA flash failed.");
-    return -1;  	
+    return -1;
   }
-  
+
   return 0;
 }

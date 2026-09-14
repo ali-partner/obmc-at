@@ -21,13 +21,13 @@ uartCommandLine() {
     num=$1
     for((i=1;i<=$num;i++));
     do 
-        echo "machine UART test success" > /dev/ttyS1
+        echo "machine UART test success" > /dev/ttyS0
         echo "The BMC set time {$i}"
         sleep 1
     done
     echo 0 > ${SYSCPLD_PATH}/uart_sel
     echo 1 > ${SYSCPLD_PATH}/uart_sel_update
-    echo "The BMC set value to /dev/ttyS1"
+    echo "The BMC set value to /dev/ttyS0"
     exit 0
 }
 

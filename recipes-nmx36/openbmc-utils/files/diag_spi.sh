@@ -4,7 +4,7 @@
 source /usr/local/bin/openbmc-utils.sh
 debug=0
 BIOS_CHIP="W25Q512JV"
-FPGA_ID="ff c2 20 18"
+FPGA_ID="ff c2 20 19"
 SPI_RESULT_FILE="/tmp/spi_test_result_file"
 BIOS_FLASH_INIT=0
 
@@ -61,7 +61,7 @@ function set_spi1_to_spi(){
     dump_gpio_config SPI1
 }
 
-function config_spi1_pin_and_path(){
+function config_spi0_pin_and_path(){
     dev=$1
 
     case ${dev} in
@@ -70,7 +70,9 @@ function config_spi1_pin_and_path(){
             set_sysfs_value $BASECPLD_SYSFS_DIR/bios_flash_sel 1 ### select update bios
             set_sysfs_value $BASECPLD_SYSFS_DIR/bios_flash_update_ctl 13 ### 0xd select bmc update main bios
             /usr/local/bin/switch_cpld.sh write 1 0x28 0x4e
-            echo "14010000.spi" > /sys/bus/platform/drivers/spi-aspeed-smc/unbind
+            if [ -d "/sys/bus/platform/drivers/spi-aspeed-smc/14010000.spi" ]; then
+                echo "14010000.spi" > /sys/bus/platform/drivers/spi-aspeed-smc/unbind
+            fi
             sleep 1
             echo "14010000.spi" > /sys/bus/platform/drivers/spi-aspeed-smc/bind
 
@@ -80,24 +82,26 @@ function config_spi1_pin_and_path(){
             set_sysfs_value $BASECPLD_SYSFS_DIR/bios_flash_sel 1 ### select update bios
             set_sysfs_value $BASECPLD_SYSFS_DIR/bios_flash_update_ctl 14 ### 0xe select bmc update backup bios
             /usr/local/bin/switch_cpld.sh write 1 0x28 0x4e
-            echo "14010000.spi" > /sys/bus/platform/drivers/spi-aspeed-smc/unbind
+            if [ -d "/sys/bus/platform/drivers/spi-aspeed-smc/14010000.spi" ]; then
+                echo "14010000.spi" > /sys/bus/platform/drivers/spi-aspeed-smc/unbind
+            fi
             sleep 1
             echo "14010000.spi" > /sys/bus/platform/drivers/spi-aspeed-smc/bind
 
-        ;;      
+        ;;
         *)
             echo "Please enter {MAIN_BIOS, BACKUP_BIOS}"
             exit -1
         ;;
     esac
-    echo "Config SPI1 Done."
+    echo "Config SPI0 Done."
 }
 
 do_cpu_me_recovery(){
     cnt=0
     date_time=`date`
     echo "Before set ME recovery $date_time"
-    ##config ME to recovery mode 
+    ##config ME to recovery mode
     ipmb-util 13 0x2c 0xb8 0xdf 0x57 0x1 0x00 0x1
     while true
     do
@@ -129,7 +133,7 @@ do_cpu_me_default(){
     while true
     do
         sleep 0.5
-        ##check ME default mode 
+        ##check ME default mode
         me_status_str=`ipmb-util 13 0x2c 0x18 0x04`
         me_status=${me_status_str:0:5}
         echo $me_status
@@ -146,20 +150,20 @@ do_cpu_me_default(){
     done
     return 0
 }
-files=("/dev/mtd16"  "/dev/mtdblock16"  "/dev/mtd16ro") 
-spi1_dev_check()
+files=("/dev/mtd12"  "/dev/mtdblock12"  "/dev/mtd12ro")
+spi0_dev_check()
 {
     local obj=$1
     local count=0
     local flag=0
     local check_num=0
-    config_spi1_pin_and_path $obj
-    
+    config_spi0_pin_and_path $obj
+
     while [ $count -lt 10 ]
     do
-        for file in "${files[@]}"; do  
+        for file in "${files[@]}"; do
             if [ -e "$file" ]; then
-                echo "DEBUG: spi1_dev_check $dev $file OK"
+                echo "DEBUG: spi0_dev_check $dev $file OK"
                 flag=$((1+flag))
                 if [ $flag -eq 3 ];then
                     #echo "find all device"
@@ -167,12 +171,12 @@ spi1_dev_check()
                     sleep 2
                     return 0
                 fi
-            else  
+            else
                 echo "$obj probe: The target string $file is not found."
                 sleep 1
                 flag=0
                 break
-            fi  
+            fi
         done
         count=$((1+count))
         #echo "check device ....$count"
@@ -181,27 +185,27 @@ spi1_dev_check()
     return 1
 }
 
-spi1_check(){
+spi0_check(){
     has_error=0
     for dev in MAIN_BIOS BACKUP_BIOS
     do
-        #echo "Check SPI1 $dev ..."
+        #echo "Check SPI0 $dev ..."
         cnt=0
         while true
         do
             ((cnt++))
             if [ $cnt -eq 3 ]; then
-                echo "Check SPI1 $dev failed."
+                echo "Check SPI0 $dev failed."
                 has_error=-1
                 break
             fi
-            spi1_dev_check $dev
+            spi0_dev_check $dev
             status=$?
             if [ $status == 0 ]; then
-                echo "Check SPI1 $dev passed."
+                echo "Check SPI0 $dev passed."
                 break
             else
-                echo "Check SPI1 $dev failed(count=${cnt})."
+                echo "Check SPI0 $dev failed(count=${cnt})."
                 sleep 0.1
                 continue
             fi
@@ -275,7 +279,7 @@ spi_check(){
     BIOS_FLASH_INIT=`cat $BASECPLD_SYSFS_DIR/bios_flash_update_ctl | sed -n 1p`
     echo "spi_check BIOS_FLASH_INIT: $BIOS_FLASH_INIT"
     #do_cpu_me_recovery
-    spi1_check >> $SPI_RESULT_FILE
+    spi0_check >> $SPI_RESULT_FILE
     if [ $? -ne 0 ];then
         echo "Check SPI1 failed"  >> $SPI_RESULT_FILE
         has_error=-1
@@ -319,7 +323,7 @@ spi_stress(){
             echo "Check FPGA simulate SPI bus stress test failed (loop $loop_count)." >> $SPI_RESULT_FILE
             break
         fi
-	
+
         loop_count=$((1+$loop_count))
         if [ 0 -eq $(($loop_count%20)) ]; then
             echo "test FPGA simulate SPI bus loop: $loop_count"
@@ -343,19 +347,19 @@ spi_stress(){
     loop_count=0
     while [ $loop_count -lt $LOOP_MAX ]
     do
-        spi1_check >>  $SPI_RESULT_FILE
+        spi0_check >>  $SPI_RESULT_FILE
         if [ $? -ne 0 ];then
             has_error=-1
         fi
         if [ $has_error -ne 0 ];then
-            echo "Check SPI1 bus failed (loop $loop_count)." >> $SPI_RESULT_FILE
+            echo "Check SPI0 bus failed (loop $loop_count)." >> $SPI_RESULT_FILE
             break
         fi
 
         loop_count=$((1+$loop_count))
         if [ 0 -eq $(($loop_count%20)) ]; then
-            echo "test SPI1 bus loop: $loop_count"
-            echo "test SPI1 bus loop: $loop_count" >> $SPI_RESULT_FILE
+            echo "test SPI0 bus loop: $loop_count"
+            echo "test SPI0 bus loop: $loop_count" >> $SPI_RESULT_FILE
         fi
     done
     #cleanup_spi
@@ -375,7 +379,7 @@ spi_stress(){
     else
         echo "SPI stress test: FAIL" >> $SPI_RESULT_FILE
     fi
-    
+
     return $has_error
 }
 
@@ -385,22 +389,22 @@ if [ $# -ne 1 ]; then
 fi
 
 spi_gpio_init() {
-    if [ -d /sys/bus/platform/drivers/spi_gpio/spi-gpio ]; then
-        echo spi-gpio > /sys/bus/platform/drivers/spi_gpio/unbind
+    if [ -d /sys/bus/platform/drivers/spi_gpio/spi ]; then
+        echo spi > /sys/bus/platform/drivers/spi_gpio/unbind
 	fi
-    gpio_export_by_name aspeed-gpio GPIOP1 GPIO_SPI_CS1
-	gpio_export_by_name aspeed-gpio GPIOP1 SPI_GPIO_SCL
-	gpio_export_by_name aspeed-gpio GPIOP3 SPI_GPIO_MISO
-	gpio_export_by_name aspeed-gpio GPIOP2 SPI_GPIO_MOSI
+    gpio_export_by_name aspeed-gpio GPIOP6 GPIO_SPI_CS1
+	gpio_export_by_name aspeed-gpio GPIOP1 GPIO_SPI_SCK
+	gpio_export_by_name aspeed-gpio GPIOP3 GPIO_SPI_MISO
+	gpio_export_by_name aspeed-gpio GPIOP2 GPIO_SPI_MOSI
 }
 
 spi_gpio_cleanup() {
-    gpio_unexport GPIO_SPI_CS0
-    gpio_unexport SPI_GPIO_SCL
-    gpio_unexport SPI_GPIO_MISO
-    gpio_unexport SPI_GPIO_MOSI
-    if [ ! -d /sys/bus/platform/drivers/spi_gpio/spi-gpio ]; then
-        echo spi-gpio > /sys/bus/platform/drivers/spi_gpio/bind
+    gpio_unexport GPIO_SPI_CS1
+    gpio_unexport GPIO_SPI_SCK
+    gpio_unexport GPIO_SPI_MISO
+    gpio_unexport GPIO_SPI_MOSI
+    if [ ! -d /sys/bus/platform/drivers/spi_gpio/spi ]; then
+        echo spi > /sys/bus/platform/drivers/spi_gpio/bind
 	fi
 }
 

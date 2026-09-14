@@ -13,8 +13,8 @@ do_start() {
         touch ${SWITCH_FILE}
     fi
     time_stamp=$(date "+%Y-%m-%d %H:%M:%S")
-    echo "$time_stamp avs_current_monitor - INFO: The avs_current_monitor disable all chips fault ." >> ${RESULT_FILE}
-    disable_fault_str=`python /usr/local/bin/avs-chip-func.py disable_fault all`
+    # echo "$time_stamp avs_current_monitor - INFO: The avs_current_monitor disable all chips fault ." >> ${RESULT_FILE}
+    # disable_fault_str=`python /usr/local/bin/avs-chip-func.py disable_fault all`
     #echo "$disable_fault_str"
     time_stamp=$(date "+%Y-%m-%d %H:%M:%S")
     echo "$time_stamp avs_current_monitor - INFO: The avs_current_monitor start." >> ${RESULT_FILE}
@@ -26,8 +26,8 @@ do_start() {
             echo "$time_stamp avs_current_monitor - INFO: The avs_current_monitor stop." >> ${RESULT_FILE}
             break;
         fi
-        check_value=`python /usr/local/bin/avs-chip-func.py check_fault all`
-        sleep 10
+        # check_value=`python /usr/local/bin/avs-chip-func.py check_fault all`
+        # sleep 10
         check_value=`python /usr/local/bin/avs-chip-func.py check all`
         switch_flag=`cat /tmp/avs_current_monitor_switch`
         sleep 20
@@ -150,13 +150,13 @@ case "$command" in
         do_start
         ;;
     check)
-        do_check 
+        do_check
         ;;
     check_all)
-        do_check_all 
+        do_check_all
         ;;
     stop)
-        do_stop 
+        do_stop
         ;;
     result_backup)
         do_result_backup

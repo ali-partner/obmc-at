@@ -51,21 +51,21 @@ declare -A device_map=(
     ["0x06010203,0x06020203"]="AST2720-A2"
 )
 
-echo "Hardware Version"
-printf "%-18s%-s" "Device" ":"
-fruid-util base | grep "Product Version" | cut -d ':' -f2
+# echo "Hardware Version"
+# printf "%-18s%-s" "Device" ":"
+# fruid-util base | grep "Product Version" | cut -d ':' -f2
 
-echo
-echo "Software Version"
-echo "BMC version       : V00.00.01h"
+# echo
+# echo "Software Version"
+# echo "BMC version       : V00.00.01h"
 
-printf "%-18s%-s " "Device_ID" ":"
+# printf "%-18s%-s " "Device_ID" ":"
 # 读取寄存器值并处理
-scu000=$(devmem 0x12c02000)
+# scu000=$(devmem 0x12c02000)
 
 # 生成匹配键并查询映射表
-match_key="${scu000}"
-device_id="${device_map[$match_key]}"
+# match_key="${scu000}"
+# device_id="${device_map[$match_key]}"
 
 # # 未匹配时尝试仅用SCU004匹配
 # if [ -z "$device_id" ]; then
@@ -74,13 +74,19 @@ device_id="${device_map[$match_key]}"
 # fi
 
 # 输出结果（未匹配时显示NA）
-echo "${device_id:-NA}"
+# echo "${device_id:-NA}"
 
+bios_ver=$(ipmitool mc getsysinfo system_fw_version | awk -F'.' '{print $(NF-1)"."$NF}')
+
+printf "%-18s%-s  %s\n" "Device" ":" "NMX-36"
+printf "%-18s%-s  %s\n" "BMC" ":" "00.04"
+printf "%-18s%-s  %s\n" "BIOS" ":" "$bios_ver"
+printf "%-18s%-s  %s\n" "Device ID" ":" "ast2700"
 
 /usr/local/bin/cpld_ver.sh > /tmp/cpld_ver
 
-echo
-echo "PLDs Version"
+# echo
+# echo "PLDs Version"
 # 处理OCM_CPLD（双引号包裹变量）
 ctrl=$(cat /tmp/cpld_ver | grep "OCM_CPLD" | cut -d ':' -f2)
 ctrl_0=$(echo "$ctrl" | cut -d '.' -f1)

@@ -35,6 +35,8 @@ PWR_PSU2_ON_CTRL_SYSFS="${BASECPLD_SYSFS_DIR}/psu2_power_on"
 PWR_PSU3_ON_CTRL_SYSFS="${BASECPLD_SYSFS_DIR}/psu3_power_on" 
 PWR_PSU4_ON_CTRL_SYSFS="${BASECPLD_SYSFS_DIR}/psu4_power_on" 
 
+PWR_EMMC_ON_EN_SYSFS="${BASECPLD_SYSFS_DIR}/bmc_emmc_pwr_en"
+
 PWR_CYCLE_DELAY=10
 PWR_OFF_DELAY=200    # wait sonic power off
 
@@ -58,6 +60,8 @@ usage() {
     echo "  cpu_pwr_cycle: Power cycle microserver ungracefully"
     echo
     echo "  sys_pwr_cycle: Power cycle system ungracefully"
+    echo
+    echo "  emmc_pwr_cycle: Power cycle emmc ungracefully"
     echo
 }
 
@@ -262,6 +266,23 @@ do_sys_pwr_cycle() {
     echo "Done"
 }
 
+do_emmc_cycle() {
+    echo "EMMC power..."
+    echo 0 > $PWR_EMMC_ON_EN_SYSFS
+    echo "EMMC Power off..."
+    sleep 5
+    echo 1 > $PWR_EMMC_ON_EN_SYSFS
+	echo "EMMC Power on..."
+}
+do_emmc_pwr_on() {
+    echo "EMMC power on..."
+    echo 1 > $PWR_EMMC_ON_EN_SYSFS
+}
+do_emmc_pwr_off() {
+    echo "EMMC power off..."
+    echo 0 > $PWR_EMMC_ON_EN_SYSFS
+}
+
 
 if [ $# -lt 1 ]; then
     usage
@@ -324,6 +345,21 @@ case "$command" in
         time_stamp=$(date "+%Y-%m-%d %H:%M:%S")
         echo "$time_stamp WARNING: BMC power cycle SYSTEM by turning off/on PSU" >> /var/volatile/log/syslog; sync
         do_sys_pwr_cycle $@
+        ;;
+    emmc_pwr_cycle)
+        time_stamp=$(date "+%Y-%m-%d %H:%M:%S")
+        echo "$time_stamp WARNING: EMMC was reset by power cycling" >> /var/volatile/log/syslog; sync
+        do_emmc_cycle $@
+        ;;
+    emmc_pwr_on)
+        time_stamp=$(date "+%Y-%m-%d %H:%M:%S")
+        echo "$time_stamp WARNING: EMMC was ON by power cycling" >> /var/volatile/log/syslog; sync
+        do_emmc_pwr_on $@
+        ;;
+    emmc_pwr_off)
+        time_stamp=$(date "+%Y-%m-%d %H:%M:%S")
+        echo "$time_stamp WARNING: EMMC was OFF by power cycling" >> /var/volatile/log/syslog; sync
+        do_emmc_pwr_off $@
         ;;
     # pimreset)
         # do_pimreset $@

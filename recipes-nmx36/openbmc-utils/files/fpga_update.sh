@@ -18,8 +18,8 @@ do_fpga_flash_bind() {
     if [ -d "/sys/class/gpio/gpio646" ]; then
         echo 646 > /sys/class/gpio/unexport
     fi
-    if [ -d "/sys/class/gpio/gpio644" ]; then
-        echo 644 > /sys/class/gpio/unexport
+    if [ -d "/sys/class/gpio/gpio650" ]; then
+        echo 650 > /sys/class/gpio/unexport
     fi
     echo 0 > ${BASECPLD_SYSFS_DIR}/bmc_fpga_update; sync
     # echo 0 > ${BASECPLD_SYSFS_DIR}/fpga_flash_wp; sync

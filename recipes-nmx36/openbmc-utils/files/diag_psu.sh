@@ -73,7 +73,7 @@ psu_pson(){
 }
 
 psu_info(){
-    bus=(75 74 73 72)
+    bus=(75 73 74 72)
     has_error=0
     total_pin=0
     total_pout=0
@@ -268,7 +268,7 @@ function psu_alive_info(){
 }
 
 psu_mfr(){
-    bus=(75 74 73 72)
+    bus=(75 73 74 72)
 
     for((i=1; i<=4; i++))
     do
@@ -333,7 +333,7 @@ function fan_info(){
 }
 
 psu_fan(){
-    bus=(75 74 73 72)
+    bus=(75 73 74 72)
 
     for((i=1; i<=4; i++))
     do

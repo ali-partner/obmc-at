@@ -48,17 +48,17 @@ if [  $loop_count -eq $LOOP_MAX ];then
 fi
 sleep 3
 
-# if [ ! -d "/sys/bus/i2c/drivers/pca954x/5-0071" ]; then
-#     echo "SW board may not be powered on, now re-bind PCA9546 on SW board." > /dev/ttyS4
-#     echo 5-0071 > /sys/bus/i2c/drivers/pca954x/bind
-#     if [ -d "/sys/bus/i2c/drivers/pca954x/5-0071" ]; then
-#         echo "Re-bind PCA9546 on SW board, done." > /dev/ttyS4
-#     else
-#         echo "Re-bind PCA9546 on SW board, FAIL!" > /dev/ttyS4
-#     fi
-# else
-#     echo "I2c devices on SW board have been mounted." > /dev/ttyS4
-# fi
+if [ ! -d "/sys/bus/i2c/drivers/pca954x/5-0071" ]; then
+    echo "SW board may not be powered on, now re-bind PCA9546 on SW board." > /dev/ttyS4
+    echo 5-0071 > /sys/bus/i2c/drivers/pca954x/bind
+    if [ -d "/sys/bus/i2c/drivers/pca954x/5-0071" ]; then
+        echo "Re-bind PCA9546 on SW board, done." > /dev/ttyS4
+    else
+        echo "Re-bind PCA9546 on SW board, FAIL!" > /dev/ttyS4
+    fi
+else
+    echo "I2c devices on SW board have been mounted." > /dev/ttyS4
+fi
 
 
 # if [ ! -d "/sys/bus/peci/drivers/intel_peci_client/0-30" ]; then
@@ -134,9 +134,9 @@ echo 1 > /run/driver_init_ok
 
 /usr/local/bin/setup_platform.sh
 
-# echo -n "To fix up ina3221 ... " > /dev/ttyS4
-# /usr/local/bin/setup_ina3221.sh
-# echo " DONE." > /dev/ttyS4
+echo -n "To fix up ina3221 ... " > /dev/ttyS4
+/usr/local/bin/setup_ina3221.sh
+echo " DONE." > /dev/ttyS4
 echo -n "To fix up eth0 ... " > /dev/ttyS4
 /usr/local/bin/eth0_mac_fixup.sh
 echo " DONE." > /dev/ttyS4
@@ -145,6 +145,10 @@ echo -n "To store version ... " > /dev/ttyS4
 echo " DONE." > /dev/ttyS4
 echo -n "To fix up eth0 vlan ..." > /dev/ttyS4
 /usr/local/bin/eth0_create_vlan.sh
+echo " DONE." > /dev/ttyS4
+
+echo -n "To setup board ..." > /dev/ttyS4
+/usr/local/bin/setup_board.sh
 echo " DONE." > /dev/ttyS4
 
 exit 0

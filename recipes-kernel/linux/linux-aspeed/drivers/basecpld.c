@@ -38,7 +38,7 @@
 #define PP_DEBUG(fmt, ...)
 
 #endif
-static const i2c_dev_attr_st basecpld_attr_table[] = {  
+static const i2c_dev_attr_st basecpld_attr_table[] = {
   {
     "cpld_major_ver",
     NULL,
@@ -114,6 +114,13 @@ static const i2c_dev_attr_st basecpld_attr_table[] = {
     I2C_DEV_ATTR_SHOW_DEFAULT,
     I2C_DEV_ATTR_STORE_DEFAULT,
     0x13, 2, 1,
+  },
+  {
+    "cpu_thermtrip_n",
+    NULL,
+    I2C_DEV_ATTR_SHOW_DEFAULT,
+    NULL,
+    0x13, 3, 1,
   },
   {
     "cpu_force_pwr_off",
@@ -208,6 +215,36 @@ static const i2c_dev_attr_st basecpld_attr_table[] = {
     0x20, 0, 8,
   },
   {
+    "bmc_emmc_pwr_en",
+    "bmc emmc pwr en\n"
+    "0: disable\n"
+    "1: enable",
+    I2C_DEV_ATTR_SHOW_DEFAULT,
+    I2C_DEV_ATTR_STORE_DEFAULT,
+    0x23, 1, 1,
+  },
+  {
+    "cpu_caterr_n",
+    NULL,
+    I2C_DEV_ATTR_SHOW_DEFAULT,
+    NULL,
+    0x25, 0, 1,
+  },
+  {
+    "cpu_smi_n",
+    NULL,
+    I2C_DEV_ATTR_SHOW_DEFAULT,
+    NULL,
+    0x25, 1, 1,
+  },
+  {
+    "cpu_nmi_n",
+    NULL,
+    I2C_DEV_ATTR_SHOW_DEFAULT,
+    NULL,
+    0x25, 2, 1,
+  },
+  {
     "bios_flash_update_ctl_wp",
     "bios flash update ctl write protect\n"
     "0x4e: enable bios flash update ctl write protect\n"
@@ -245,8 +282,8 @@ static const i2c_dev_attr_st basecpld_attr_table[] = {
     0x40, 0, 1,
   },
   {
-    "psu3_output_ok",
-    "psu3 output status\n"
+    "psu2_output_ok",
+    "psu2 output status\n"
     "0: abnormal\n"
     "1: normal",
     I2C_DEV_ATTR_SHOW_DEFAULT,
@@ -254,8 +291,8 @@ static const i2c_dev_attr_st basecpld_attr_table[] = {
     0x40, 1, 1,
   },
   {
-    "psu2_output_ok",
-    "psu2 output status\n"
+    "psu3_output_ok",
+    "psu3 output status\n"
     "0: abnormal\n"
     "1: normal",
     I2C_DEV_ATTR_SHOW_DEFAULT,
@@ -264,7 +301,7 @@ static const i2c_dev_attr_st basecpld_attr_table[] = {
   },
   {
     "psu1_output_ok",
-    "psu2 output status\n"
+    "psu1 output status\n"
     "0: abnormal\n"
     "1: normal",
     I2C_DEV_ATTR_SHOW_DEFAULT,
@@ -281,8 +318,8 @@ static const i2c_dev_attr_st basecpld_attr_table[] = {
     0x41, 0, 1,
   },
   {
-    "psu3_vin_pg",
-    "psu3 vin status\n"
+    "psu2_vin_pg",
+    "psu2 vin status\n"
     "0: abnormal\n"
     "1: normal",
     I2C_DEV_ATTR_SHOW_DEFAULT,
@@ -290,8 +327,8 @@ static const i2c_dev_attr_st basecpld_attr_table[] = {
     0x41, 1, 1,
   },
   {
-    "psu2_vin_pg",
-    "psu2 vin status\n"
+    "psu3_vin_pg",
+    "psu3 vin status\n"
     "0: abnormal\n"
     "1: normal",
     I2C_DEV_ATTR_SHOW_DEFAULT,
@@ -317,8 +354,8 @@ static const i2c_dev_attr_st basecpld_attr_table[] = {
     0x42, 0, 1,
   },
   {
-    "psu3_present",
-    "psu3 present\n"
+    "psu2_present",
+    "psu2 present\n"
     "0: normal\n"
     "1: abnormal",
     I2C_DEV_ATTR_SHOW_DEFAULT,
@@ -326,8 +363,8 @@ static const i2c_dev_attr_st basecpld_attr_table[] = {
     0x42, 1, 1,
   },
   {
-    "psu2_present",
-    "psu2 present\n"
+    "psu3_present",
+    "psu3 present\n"
     "0: normal\n"
     "1: abnormal",
     I2C_DEV_ATTR_SHOW_DEFAULT,
@@ -362,8 +399,8 @@ static const i2c_dev_attr_st basecpld_attr_table[] = {
     0x43, 0, 1,
   },
   {
-    "psu3_power_on",
-    "psu3 power ctrl\n"
+    "psu2_power_on",
+    "psu2 power ctrl\n"
     "0: power on\n"
     "1: power off",
     I2C_DEV_ATTR_SHOW_DEFAULT,
@@ -371,8 +408,8 @@ static const i2c_dev_attr_st basecpld_attr_table[] = {
     0x43, 1, 1,
   },
   {
-    "psu2_power_on",
-    "psu2 power ctrl\n"
+    "psu3_power_on",
+    "psu3 power ctrl\n"
     "0: power on\n"
     "1: power off",
     I2C_DEV_ATTR_SHOW_DEFAULT,
@@ -398,8 +435,8 @@ static const i2c_dev_attr_st basecpld_attr_table[] = {
     0x45, 0, 1,
   },
   {
-    "pwr3_output_ok_r",
-    "pwr3 output interrupt\n"
+    "pwr2_output_ok_r",
+    "pwr2 output interrupt\n"
     "0: abnormal\n"
     "1: normal",
     I2C_DEV_ATTR_SHOW_DEFAULT,
@@ -407,8 +444,8 @@ static const i2c_dev_attr_st basecpld_attr_table[] = {
     0x45, 1, 1,
   },
   {
-    "pwr2_output_ok_r",
-    "pwr2 output interrupt\n"
+    "pwr3_output_ok_r",
+    "pwr3 output interrupt\n"
     "0: abnormal\n"
     "1: normal",
     I2C_DEV_ATTR_SHOW_DEFAULT,
@@ -434,8 +471,8 @@ static const i2c_dev_attr_st basecpld_attr_table[] = {
     0x45, 4, 1,
   },
   {
-    "pwr3_vinpg_r",
-    "pwr3 vin pg interrupt\n"
+    "pwr2_vinpg_r",
+    "pwr2 vin pg interrupt\n"
     "0: abnormal\n"
     "1: normal",
     I2C_DEV_ATTR_SHOW_DEFAULT,
@@ -443,8 +480,8 @@ static const i2c_dev_attr_st basecpld_attr_table[] = {
     0x45, 5, 1,
   },
   {
-    "pwr2_vinpg_r",
-    "pwr2 vin pg interrupt\n"
+    "pwr3_vinpg_r",
+    "pwr3 vin pg interrupt\n"
     "0: abnormal\n"
     "1: normal",
     I2C_DEV_ATTR_SHOW_DEFAULT,
@@ -470,8 +507,8 @@ static const i2c_dev_attr_st basecpld_attr_table[] = {
     0x47, 0, 1,
   },
   {
-    "pwr3_output_ok_mask",
-    "pwr3 output interrupt mask\n"
+    "pwr2_output_ok_mask",
+    "pwr2 output interrupt mask\n"
     "0: abnormal\n"
     "1: normal",
     I2C_DEV_ATTR_SHOW_DEFAULT,
@@ -479,8 +516,8 @@ static const i2c_dev_attr_st basecpld_attr_table[] = {
     0x47, 1, 1,
   },
   {
-    "pwr2_output_ok_mask",
-    "pwr2 output interrupt mask\n"
+    "pwr3_output_ok_mask",
+    "pwr3 output interrupt mask\n"
     "0: abnormal\n"
     "1: normal",
     I2C_DEV_ATTR_SHOW_DEFAULT,
@@ -506,8 +543,8 @@ static const i2c_dev_attr_st basecpld_attr_table[] = {
     0x47, 4, 1,
   },
   {
-    "pwr3_vinpg_mask",
-    "pwr3 vin pg interrupt mask\n"
+    "pwr2_vinpg_mask",
+    "pwr2 vin pg interrupt mask\n"
     "0: abnormal\n"
     "1: normal",
     I2C_DEV_ATTR_SHOW_DEFAULT,
@@ -515,8 +552,8 @@ static const i2c_dev_attr_st basecpld_attr_table[] = {
     0x47, 5, 1,
   },
   {
-    "pwr2_vinpg_mask",
-    "pwr2 vin pg interrupt mask\n"
+    "pwr3_vinpg_mask",
+    "pwr3 vin pg interrupt mask\n"
     "0: abnormal\n"
     "1: normal",
     I2C_DEV_ATTR_SHOW_DEFAULT,
@@ -542,8 +579,8 @@ static const i2c_dev_attr_st basecpld_attr_table[] = {
     0x49, 0, 1,
   },
   {
-    "psu3_plug_his",
-    "psu3 plug history status\n"
+    "psu2_plug_his",
+    "psu2 plug history status\n"
     "0: plugged\n"
     "1: unplugged",
     I2C_DEV_ATTR_SHOW_DEFAULT,
@@ -551,8 +588,8 @@ static const i2c_dev_attr_st basecpld_attr_table[] = {
     0x49, 1, 1,
   },
   {
-    "psu2_plug_his",
-    "psu2 plug history status\n"
+    "psu3_plug_his",
+    "psu3 plug history status\n"
     "0: plugged\n"
     "1: unplugged",
     I2C_DEV_ATTR_SHOW_DEFAULT,
@@ -714,7 +751,7 @@ static const i2c_dev_attr_st basecpld_attr_table[] = {
     NULL,
     0x7B, 7, 1,
   },
-  
+
   {
     "1v8_ldo_pg",
     "pg status\n"
@@ -759,6 +796,33 @@ static const i2c_dev_attr_st basecpld_attr_table[] = {
     I2C_DEV_ATTR_SHOW_DEFAULT,
     NULL,
     0x7C, 4, 1,
+  },
+  {
+    "cpu_error0_n",
+    "cpu error signal 0\n"
+    "0: abnormal\n"
+    "1: normal",
+    I2C_DEV_ATTR_SHOW_DEFAULT,
+    NULL,
+    0x82, 1, 1,
+  },
+  {
+    "cpu_error1_n",
+    "cpu error signal 1\n"
+    "0: abnormal\n"
+    "1: normal",
+    I2C_DEV_ATTR_SHOW_DEFAULT,
+    NULL,
+    0x82, 2, 1,
+  },
+  {
+    "cpu_error2_n",
+    "cpu error signal 2\n"
+    "0: abnormal\n"
+    "1: normal",
+    I2C_DEV_ATTR_SHOW_DEFAULT,
+    NULL,
+    0x82, 3, 1,
   },
   {
     "uart_status",

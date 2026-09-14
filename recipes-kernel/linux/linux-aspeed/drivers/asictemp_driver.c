@@ -89,7 +89,6 @@ static void asic_temp_process(struct asic_temp_filter *filter, int raw_temp)
     if (valid_data_num)
         filter->smooth_temp = sum / valid_data_num;
 
-    printk("filter->initialized = %d\n");
     if (!filter->initialized)
         filter->initialized = 1;
 }
@@ -124,7 +123,6 @@ static ssize_t asic_temp_show(struct device *dev,
     value = i2c_smbus_read_byte_data(client, dev_attr->ida_reg);
     mutex_unlock(&data->idd_lock);
 
-    printk("asic_temp_show value = %d\n", value);
     if (value > 0)
         break;
 

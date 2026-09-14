@@ -1,6 +1,6 @@
 /*
  * psu_driver.c - The i2c driver to get following PSU information:
- * 
+ *
  * PFE1100-12-054NA, PFE1500-12-054NAC, DDM1500BH12AXF
  *
  * Copyright 2018-present Facebook. All Rights Reserved.
@@ -51,6 +51,7 @@ typedef enum {
     DELTA_1600,
     DELTA_2000,
     GW_2000,
+    GW_2700,
     APLUS_2700,
     UNKNOWN
 } model_name;
@@ -60,6 +61,7 @@ typedef enum {
 #define DELTA_ES_MODEL_LEN    14  /* DPST-1630AB A# */
 #define DELTA_CRPS_MODEL_LEN  13  /* DPST-2030AB D# */
 #define GW_MODEL_LEN          14  /* GW-CRPS2000DWA# */
+#define GW_MODEL_2700_LEN     13  /* CRPS2700T2W-A */
 #define APLUS_MODEL_LEN       14  /* APLUSPOWER## */
 
 static model_name model;
@@ -127,7 +129,7 @@ static int psu_convert(struct device *dev, struct device_attribute *attr)
     int count = 10;
     int ret = -1;
     u8 length, model_chr;
-    
+
     mutex_lock(&data->idd_lock);
 
     /*
@@ -168,6 +170,9 @@ static int psu_convert(struct device *dev, struct device_attribute *attr)
     } else if (length == GW_MODEL_LEN && model_chr == 'G') {
         /* PSU model name: GW-CRPS2000DWA */
         model = GW_2000;
+    } else if (length == GW_MODEL_2700_LEN && model_chr == 'C') {
+        /* PSU model name: CRPS2700T2W-A */
+        model = GW_2700;
     } else if (length == APLUS_MODEL_LEN && model_chr == 'A') {
         /* PSU model name: APLUSPOWER */
         model = APLUS_2700;
@@ -231,6 +236,9 @@ static int psu_ascii_convert(struct device *dev, struct device_attribute *attr, 
     } else if (length == GW_MODEL_LEN && model_chr == 'G') {
         /* PSU model name: GW-CRPS2000DWA */
         model = GW_2000;
+    } else if (length == GW_MODEL_2700_LEN && model_chr == 'C') {
+        /* PSU model name: CRPS2700T2W-A */
+        model = GW_2700;
     } else if (length == APLUS_MODEL_LEN && model_chr == 'A') {
         /* PSU model name: APLUSPOWER */
         model = APLUS_2700;
@@ -257,6 +265,7 @@ static ssize_t psu_vin_show(struct device *dev,
         case DELTA_1600:
         case DELTA_2000:
         case GW_2000:
+        case GW_2700:
         case APLUS_2700:
             result = linear_convert(LINEAR_11, result, 0);
             break;
@@ -284,6 +293,7 @@ static ssize_t psu_max_speed(struct device *dev,
         case DELTA_1600:
         case DELTA_2000:
         case GW_2000:
+        case GW_2700:
         case APLUS_2700:
             result = linear_convert(LINEAR_11, result, 0) / 1000;
             break;
@@ -310,6 +320,7 @@ static ssize_t psu_min_speed(struct device *dev,
         case DELTA_1600:
         case DELTA_2000:
         case GW_2000:
+        case GW_2700:
         case APLUS_2700:
             result = linear_convert(LINEAR_11, result, 0) / 1000;
             break;
@@ -336,6 +347,7 @@ static ssize_t fan_command_rd(struct device *dev,
         case DELTA_1600:
         case DELTA_2000:
         case GW_2000:
+        case GW_2700:
         case APLUS_2700:
             result = linear_convert(LINEAR_11, result, 0);
             break;
@@ -381,7 +393,7 @@ static ssize_t fan_command_wr(struct device *dev,
 	  mutex_unlock(&data->idd_lock);
 	  return -1;
     }
-    //printk("start write speed value 0x%04x !\n",speed);  	
+    //printk("start write speed value 0x%04x !\n",speed);
     //data2.word = speed;
     //printk("start write speed data.word 0x%04x data2.byte =0x%02x !\n",data2.word,data2.byte);
     ret = i2c_smbus_write_word_data(client, dev_attr->ida_reg,speed);
@@ -411,6 +423,7 @@ static ssize_t psu_iin_show(struct device *dev,
         case DELTA_1600:
         case DELTA_2000:
         case GW_2000:
+        case GW_2700:
         case APLUS_2700:
             result = linear_convert(LINEAR_11, result, 0);
             break;
@@ -437,6 +450,7 @@ static ssize_t psu_vout_show(struct device *dev,
         case DELTA_1600:
         case DELTA_2000:
         case GW_2000:
+        case GW_2700:
         case APLUS_2700:
             result = linear_convert(LINEAR_16, result, -9);
             break;
@@ -463,6 +477,7 @@ static ssize_t psu_iout_show(struct device *dev,
         case DELTA_1600:
         case DELTA_2000:
         case GW_2000:
+        case GW_2700:
         case APLUS_2700:
             result = linear_convert(LINEAR_11, result, 0);
             break;
@@ -489,6 +504,7 @@ static ssize_t psu_temp_show(struct device *dev,
         case DELTA_1600:
         case DELTA_2000:
         case GW_2000:
+        case GW_2700:
         case APLUS_2700:
             result = linear_convert(LINEAR_11, result, 0);
             break;
@@ -509,12 +525,13 @@ static ssize_t psu_fan_show(struct device *dev,
         /* error case */
         return -1;
     }
-  
+
     switch (model) {
         case LITEON_2200:
         case DELTA_1600:
         case DELTA_2000:
         case GW_2000:
+        case GW_2700:
         case APLUS_2700:
             result = linear_convert(LINEAR_11, result, 0) / 1000;
             break;
@@ -530,6 +547,7 @@ static ssize_t psu_power_show(struct device *dev,
                                   char *buf)
 {
     int result = psu_convert(dev, attr);
+    unsigned int power;
 
     if (result < 0) {
         /* error case */
@@ -541,14 +559,15 @@ static ssize_t psu_power_show(struct device *dev,
         case DELTA_1600:
         case DELTA_2000:
         case GW_2000:
+        case GW_2700:
         case APLUS_2700:
-            result = linear_convert(LINEAR_11, result, 0) * 1000;
+            power = (unsigned int)linear_convert(LINEAR_11, result, 0) * 1000;
             break;
         default:
             break;
     }
 
-    return scnprintf(buf, PAGE_SIZE, "%d\n", result);
+    return scnprintf(buf, PAGE_SIZE, "%u\n", power);
 }
 
 static ssize_t psu_ascii_show(struct device *dev,
@@ -582,6 +601,7 @@ static ssize_t psu_vstby_show(struct device *dev,
         case DELTA_1600:
         case DELTA_2000:
         case GW_2000:
+        case GW_2700:
         case APLUS_2700:
             result = linear_convert(LINEAR_11, result, 0);
             break;
@@ -608,6 +628,7 @@ static ssize_t psu_istby_show(struct device *dev,
         case DELTA_1600:
         case DELTA_2000:
         case GW_2000:
+        case GW_2700:
         case APLUS_2700:
             result = linear_convert(LINEAR_11, result, 0);
             break;
@@ -634,6 +655,7 @@ static ssize_t psu_pstby_show(struct device *dev,
         case DELTA_1600:
         case DELTA_2000:
         case GW_2000:
+        case GW_2700:
         case APLUS_2700:
             result = linear_convert(LINEAR_11, result, 0);
             break;

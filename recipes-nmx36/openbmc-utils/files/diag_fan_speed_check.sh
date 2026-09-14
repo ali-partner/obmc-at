@@ -31,11 +31,11 @@ do_start() {
                         break
                     fi
 
-                    if [[ "$i" -ge 1 ]] && [[ "$i" -le 4 ]]; then
-                        local_index=$i
+                    if (( i % 2 == 1 )); then
+                        local_index=$(((i + 1) / 2))
                         FANCPLD_SYSFS_DIR=$FAN1CPLD_SYSFS_DIR
-                    elif [[ "$i" -ge 5 ]] && [[ "$i" -le 8 ]]; then
-                        local_index=$((i - 4))
+                    else
+                        local_index=$((i / 2))
                         FANCPLD_SYSFS_DIR=$FAN2CPLD_SYSFS_DIR
                     fi
 
@@ -106,7 +106,7 @@ do_start() {
                 sleep 0.1
             done
         fi
-        #one loop 120s 
+        #one loop 120s
         sleep 120
     done
 }
@@ -167,7 +167,7 @@ case "$command" in
         do_start $RPM_ALARM_VALUE
         ;;
     check)
-        do_check 
+        do_check
         ;;
     result_backup)
         do_result_backup

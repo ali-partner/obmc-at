@@ -56,7 +56,7 @@ start_sol_session() {
 # otherwise fallback to the old method
 
 if mTerm_server_running; then
-  exec /usr/local/bin/mTerm_client accton
+  exec /usr/local/bin/mTerm_client ttyS0
 else
   start_sol_session
 fi

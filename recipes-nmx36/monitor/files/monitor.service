@@ -1,0 +1,15 @@
+[Unit]
+Description=Thermal plan - monitor
+After=init-platform.service
+
+[Service]
+ExecStart=/usr/bin/monitord
+Type=simple
+StandardOutput=journal
+StandardError=journal
+TTYPath=/dev/ttyS4
+SyslogIdentifier=monitor
+KillSignal=SIGKILL
+
+[Install]
+WantedBy=multi-user.target

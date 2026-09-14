@@ -49,11 +49,11 @@ fan_led_get(){
     if [[ "$fan_board_type" == "0" ]]; then
         for i in ${fan_air}
         do
-            if [[ "$i" -ge 1 ]] && [[ "$i" -le 4 ]]; then
-                local_index=$i
+            if (( i % 2 == 1 )); then
+                local_index=$(((i + 1) / 2))
                 FANCPLD_SYSFS_DIR=$FAN1CPLD_PATH
-            elif [[ "$i" -ge 5 ]] && [[ "$i" -le 8 ]]; then
-                local_index=$((i - 4))
+            else
+                local_index=$((i / 2))
                 FANCPLD_SYSFS_DIR=$FAN2CPLD_PATH
             fi
             val=`cat ${FANCPLD_SYSFS_DIR}/fantray${local_index}_led_ctrl | sed -n 1p`
@@ -112,11 +112,11 @@ fan_led_set(){
         if [ "$1" == "all" ]; then
             for i in ${fan_air}
             do
-                if [[ "$i" -ge 1 ]] && [[ "$i" -le 4 ]]; then
-                    local_index=$i
+                if (( i % 2 == 1 )); then
+                    local_index=$(((i + 1) / 2))
                     FANCPLD_SYSFS_DIR=$FAN1CPLD_PATH
-                elif [[ "$i" -ge 5 ]] && [[ "$i" -le 8 ]]; then
-                    local_index=$((i - 4))
+                else
+                    local_index=$((i / 2))
                     FANCPLD_SYSFS_DIR=$FAN2CPLD_PATH
                 fi
                 echo "Set LED fan${i} to ${status[mode]}"
@@ -124,11 +124,11 @@ fan_led_set(){
                 sleep 0.1
             done
         else
-            if [[ "$1" -ge 1 ]] && [[ "$1" -le 4 ]]; then
-                local_index=$index
+            if (( i % 2 == 1 )); then
+                local_index=$(((i + 1) / 2))
                 FANCPLD_SYSFS_DIR=$FAN1CPLD_PATH
-            elif [[ "$1" -ge 5 ]] && [[ "$1" -le 8 ]]; then
-                local_index=$((index - 4))
+            else
+                local_index=$((i / 2))
                 FANCPLD_SYSFS_DIR=$FAN2CPLD_PATH
             fi
             echo "Set ${fan_board} board LED fan${1} to ${status[mode]}"
@@ -179,15 +179,19 @@ system_led_get(){
         fi
 
         if [ "$ctl" == "0x1" ]; then
-            if [[ "$fan_board_type" == "0" ]]; then
-                ctl=`cat ${FAN1CPLD_PATH}/${i}_led_ctrl_status | sed -n 1p`
-                value=`cat ${FAN1CPLD_PATH}/${i}_led_ctrl | sed -n 1p`
-                system_led_status fan1 $value
+            if [ "$i" == "fan" ]; then
+                if [[ "$fan_board_type" == "0" ]]; then
+                    ctl=`cat ${FAN1CPLD_PATH}/${i}_led_ctrl_status | sed -n 1p`
+                    value=`cat ${FAN1CPLD_PATH}/${i}_led_ctrl | sed -n 1p`
+                    system_led_status fan1 $value
 
-                ctl=`cat ${FAN2CPLD_PATH}/${i}_led_ctrl_status | sed -n 1p`
-                value=`cat ${FAN2CPLD_PATH}/${i}_led_ctrl | sed -n 1p`
-                system_led_status fan2 $value
-            elif [[ "$fan_board_type" == "1" ]]; then
+                    ctl=`cat ${FAN2CPLD_PATH}/${i}_led_ctrl_status | sed -n 1p`
+                    value=`cat ${FAN2CPLD_PATH}/${i}_led_ctrl | sed -n 1p`
+                    system_led_status fan2 $value
+                elif [[ "$fan_board_type" == "1" ]]; then
+                    system_led_status $i $value
+                fi
+            else
                 system_led_status $i $value
             fi
         else
@@ -233,7 +237,7 @@ system_led_set(){
 mgmt_led_get(){
     echo "Get MGMT LED status: "
 
-    val=`ast-mdio.py --mdio 3 --phy 0x09 read 0x0 | cut -d ":" -f 2 | awk '{gsub(/^\s+|\s+$/,"");print'}`
+    val=`ast-mdio.py --mdio 2 --phy 0x09 read 0x0 | cut -d ":" -f 2 | awk '{gsub(/^\s+|\s+$/,"");print'}`
     if [ "$val" == "0x1940" ]; then
         echo "  LED MGMT status: off"
     elif [ "$val" == "0x1140" ]; then
@@ -254,7 +258,7 @@ mgmt_led_set(){
     fi
 
     echo "Set LED ${1} to ${status[mode]}"
-    ast-mdio.py --mdio 3 --phy 0x09 write 0x0 ${value[mode]}
+    ast-mdio.py --mdio 2 --phy 0x09 write 0x0 ${value[mode]}
 }
 
 

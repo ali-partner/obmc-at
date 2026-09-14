@@ -75,10 +75,11 @@ class fan(devicebase):
 
     @property
     def AirFlow(self):
-        ret, val = self.get_i2cbits_by_smbus(self.smbus_obj, self.AirFlowconfig)
-        if ret == True and val == 0:
+        fru = self.get_fru_basic_info(self.name.lower())
+        productName = fru.get("Product Name", "N/A")
+        if productName.endswith("-F"):
             self._fan__AirFlow = "F2B"
-        elif ret == True and val == 1:
+        elif productName.endswith("-B"):
             self._fan__AirFlow = "B2F"
         else:
             self._fan__AirFlow = "N/A"

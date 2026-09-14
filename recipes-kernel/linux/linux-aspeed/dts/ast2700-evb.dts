@@ -1010,7 +1010,6 @@
 
 &peci0 {
 	status = "okay";
-	clock-frequency = <2000000>;
 };
 
 

@@ -49,7 +49,7 @@ flash_wr() {
 	n=0
 	cnt_sum=0
 	# WREN (write enable) 0x06 set Write Enable
-	spi-bb -s 644 -S low -c 645 -C low -o 646 -O rising -i 647 -I falling -w 8 0x06 > /dev/null 2>&1
+	spi-bb -s 650 -S low -c 645 -C low -o 646 -O rising -i 647 -I falling -w 8 0x06 > /dev/null 2>&1
 	/usr/bin/fpgaupdate-spi $wr_file
 
 #    while read LINE
@@ -59,7 +59,7 @@ flash_wr() {
 #		cnt_sum=$cnt+$cnt_sum
 #		let n=n+1
 #		let i=i+1
-#        if [[ ${n} -eq 16 || ${n} -eq ${line_max} ]]; then 
+#        if [[ ${n} -eq 16 || ${n} -eq ${line_max} ]]; then
 #		    n=0
 #		    #write data + write command(1Byte)+ Address(3Byte)
 #            cnt_sum=$((($cnt_sum+4)*8))
@@ -75,11 +75,11 @@ flash_wr() {
 #            fi
 #		    cnt_sum=0
 #		fi
-# 
+#
 #    done  < $tmp_file
 
     # WRDI (write disable) 0x04 set Write Disable
-    spi-bb -s 644 -S low -c 645 -C low -o 646 -O rising -i 647 -I falling -w 8 0x04 > /dev/null 2>&1
+    spi-bb -s 650 -S low -c 645 -C low -o 646 -O rising -i 647 -I falling -w 8 0x04 > /dev/null 2>&1
 
     #rm -rf $tmp_file
     #Disable bmc update fpga channel
@@ -101,7 +101,7 @@ flash_rd() {
     echo -n "Reading FPGA's flash ..."
     echo 0 > ${BASECPLD_SYSFS_DIR}/bmc_fpga_update; sync
     #ֻ��ǰ16KB����
-    spi-bb -s 644 -S low -c 645 -C low -o 646 -O rising -i 647 -I falling -r $READ_MAX_BIT -w 32 0x3 0x0 0x0 0x0 |  grep "Read" > $temp_file
+    spi-bb -s 650 -S low -c 645 -C low -o 646 -O rising -i 647 -I falling -r $READ_MAX_BIT -w 32 0x3 0x0 0x0 0x0 |  grep "Read" > $temp_file
     echo "done."
     echo 1 > ${BASECPLD_SYSFS_DIR}/bmc_fpga_update; sync
 
@@ -122,16 +122,16 @@ flash_erase() {
 
     echo -n "Erasing FPGA's flash ..."
     # WREN (write enable) 0x06 set Write Enable
-    spi-bb -s 644 -S low -c 645 -C low -o 646 -O rising -i 647 -I falling -w 8 0x06 > /dev/null 2>&1
+    spi-bb -s 650 -S low -c 645 -C low -o 646 -O rising -i 647 -I falling -w 8 0x06 > /dev/null 2>&1
     # RDSR (read status register)   0x05
-    spi-bb -s 644 -S low -c 645 -C low -o 646 -O rising -i 647 -I falling -r 16 -w 8 0x05 > /dev/null 2>&1
+    spi-bb -s 650 -S low -c 645 -C low -o 646 -O rising -i 647 -I falling -r 16 -w 8 0x05 > /dev/null 2>&1
     # CE (chip erase)  60 or C7 (hex)
-    spi-bb -s 644 -S low -c 645 -C low -o 646 -O rising -i 647 -I falling -w 8 0x60 > /dev/null 2>&1
+    spi-bb -s 650 -S low -c 645 -C low -o 646 -O rising -i 647 -I falling -w 8 0x60 > /dev/null 2>&1
     # RDSR (read status register)   0x05
-    spi-bb -s 644 -S low -c 645 -C low -o 646 -O rising -i 647 -I falling -r 16 -w 8 0x05 > /dev/null 2>&1
-    
+    spi-bb -s 650 -S low -c 645 -C low -o 646 -O rising -i 647 -I falling -r 16 -w 8 0x05 > /dev/null 2>&1
+
     # WRDI (write disable) 0x04 set Write Disable
-    spi-bb -s 644 -S low -c 645 -C low -o 646 -O rising -i 647 -I falling -w 8 0x04 > /dev/null 2>&1
+    spi-bb -s 650 -S low -c 645 -C low -o 646 -O rising -i 647 -I falling -w 8 0x04 > /dev/null 2>&1
     #Disable bmc update fpga channel
     echo 1 > ${BASECPLD_SYSFS_DIR}/fpga_flash_wp; sync
     echo 1 > ${BASECPLD_SYSFS_DIR}/bmc_fpga_update; sync
@@ -144,7 +144,7 @@ flash_rdid() {
     echo 0 > ${BASECPLD_SYSFS_DIR}/bmc_fpga_update; sync
 
     echo -n "Read FPGA's flash ID..."
-    spi-bb -s 644 -S low -c 645 -C low -o 646 -O rising -i 647 -I falling -r 32 -w 8 0x9F
+    spi-bb -s 650 -S low -c 645 -C low -o 646 -O rising -i 647 -I falling -r 32 -w 8 0x9F
     echo 1 > ${BASECPLD_SYSFS_DIR}/bmc_fpga_update; sync
     echo "done."
 }
