@@ -54,7 +54,6 @@ IMAGE_INSTALL += " \
   dhcpcd \
   libbic \
   openbmc-gpio \
-  mac-temp-monitor \
   memtester \
   iperf \
   fio \
