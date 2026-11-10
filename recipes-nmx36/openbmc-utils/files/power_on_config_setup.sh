@@ -16,6 +16,54 @@ echo -n "Get product name from FRU ... " > /dev/ttyS4
 /usr/local/bin/set_product_name.sh
 
 
+# Host0 IPMI KCS is at 0xca2 (SMBIOS type 38) -> /dev/ipmi-kcs2.
+HOST_IPMI_SERVICES="
+    phosphor-ipmi-host.service
+    phosphor-ipmi-kcs@ipmi-kcs2.service
+"
+
+wait_host_ipmi_ready()
+{
+    local retry=0
+    local max_retries=30
+    local svc
+    local all_ready
+
+    while true; do
+        all_ready=1
+        for svc in $HOST_IPMI_SERVICES; do
+            if ! systemctl is-active --quiet "$svc"; then
+                all_ready=0
+                break
+            fi
+        done
+
+        if [ "$all_ready" -eq 1 ]; then
+            echo "Host IPMI KCS services are ready." > /dev/ttyS4
+            return 0
+        fi
+
+        if [ $retry -ge $max_retries ]; then
+            echo "WARNING: IPMI KCS service not ready after ${max_retries}s, continuing anyway." > /dev/ttyS4
+            break
+        fi
+        sleep 1
+        retry=$((retry + 1))
+    done
+}
+
+# BMC power on CPU
+# System machine reset
+if ! is_us_on; then
+    # Do not power on the CPU until the host IPMI KCS interface can answer.
+    wait_host_ipmi_ready
+    # Device first power up, need to delete watchdog config file
+    sleep 0.1
+    echo "BMC power on CPU." > /dev/ttyS4
+    i2cset -f -y 0 0x0d 0x15 0x1
+fi
+
+
 MAX_RETRY=100
 retry_time=0
 while [ $retry_time -lt $MAX_RETRY ]

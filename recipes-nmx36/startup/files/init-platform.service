@@ -1,6 +1,7 @@
 [Unit]
 Description=Startup Scripts
-After=network.target
+After=network.target phosphor-ipmi-host.service phosphor-ipmi-kcs@ipmi-kcs2.service
+Wants=phosphor-ipmi-host.service phosphor-ipmi-kcs@ipmi-kcs2.service
 
 [Service]
 ExecStart=/usr/local/bin/power_on_config_setup.sh

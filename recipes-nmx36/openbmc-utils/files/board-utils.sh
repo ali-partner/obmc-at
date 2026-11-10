@@ -98,50 +98,50 @@ dc_sensor_configs=(
 
     # xdpe12284
     "17 58 in3_input    GRR_PVCCIN_VOUT    1000    Volts  1.4  1.8"
-    "17 58 in4_input    GRR_PVNN_VOUT      1000    Volts  0.55 1"
+    "17 58 in4_input    GRR_PVNN_VOUT      1000    Volts  0.55 1.1"
     "17 58 curr3_input  GRR_PVCCIN_IOUT    1000    Amps   -2  135"
     "17 58 curr4_input  GRR_PVNN_IOUT      1000    Amps   -2  49.5"
 
     # xdpe12284
     "17 60 in3_input    GRR_P1V1_VOUT       1000    Volts  1.04  1.16"
-    "17 60 in4_input    GRR_PVNN_PCH_VOUT   1000    Volts  0.55  1"
+    "17 60 in4_input    GRR_PVNN_PCH_VOUT   1000    Volts  0.55  1.1"
     "17 60 curr3_input  GRR_P1V1_IOUT       1000    Amps   -2  13.5"
     "17 60 curr4_input  GRR_PVNN_PCH_IOUT   1000    Amps   -2  10.8"
 
     # xdpe12284
     "17 6e in3_input    GRR_P0V9_VOUT       1000    Volts  0.84  0.96"
-    "17 6e in4_input    GRR_PVCCINF_VOUT    1000    Volts  0.55  1"
+    "17 6e in4_input    GRR_PVCCINF_VOUT    1000    Volts  0.55  1.1"
     "17 6e curr3_input  GRR_P0V9_IOUT       1000    Amps   -2  22.5"
     "17 6e curr4_input  GRR_PVCCINF_IOUT    1000    Amps   -2  31.5"
 
     # ucd90160
-    "17 5f in1_input    GRR_PVNN_UCD_VOUT        1000    Volts  0.55  1"
-    "17 5f in2_input    GRR_PVNN_PCH_UCD_VOUT    1000    Volts  0.55  1"
-    "17 5f in3_input    GRR_P0V9_UCD_VOUT        1000    Volts  0.84  0.96"
-    "17 5f in4_input    GRR_PVCCINF_UCD_VOUT     1000    Volts  0.55  1"
-    "17 5f in5_input    GRR_PVCCIN_UCD_VOUT      1000    Volts  1.4   1.8"
-    "17 5f in6_input    GRR_P1V8_CPU_UCD_VOUT    1000    Volts  1.73  1.87"
-    "17 5f in7_input    GRR_P1V025_UCD_VOUT      1000    Volts  0.995 1.1"
-    "17 5f in8_input    GRR_P1V1_UCD_VOUT        1000    Volts  1.04  1.16"
-    "17 5f in9_input    GRR_P5V_DDR_UCD_VOUT     1000    Volts  4.85  5.15"
-    "17 5f in10_input   GRR_P3V3_STBY_UCD_VOUT   1000    Volts  2.97  3.63"
-    "17 5f in11_input   GRR_P1V8_STBY_UCD_VOUT   1000    Volts  1.62  1.98"
-    # "17 5f in12_input   GRR_P3V3_CLK_UCD_VOUT    1000    Volts  3.14  3.47"
-    # "17 5f in13_input   GRR_P1V8_CLK_UCD_VOUT    1000    Volts  1.71  1.89"
-    "17 5f in14_input   GRR_P5V_STBY_UCD_VOUT    1000    Volts  4.6   5.4"
+    "17 5f in1_input    GRR_PVNN_UCD_VOUT        1000    Volts  0.539   1.122"
+    "17 5f in2_input    GRR_PVNN_PCH_UCD_VOUT    1000    Volts  0.539   1.122"
+    "17 5f in3_input    GRR_P0V9_UCD_VOUT        1000    Volts  0.8232  0.9792"
+    "17 5f in4_input    GRR_PVCCINF_UCD_VOUT     1000    Volts  0.539   1.122"
+    "17 5f in5_input    GRR_PVCCIN_UCD_VOUT      1000    Volts  1.372   1.836"
+    "17 5f in6_input    GRR_P1V8_CPU_UCD_VOUT    1000    Volts  1.6954  1.9074"
+    "17 5f in7_input    GRR_P1V025_UCD_VOUT      1000    Volts  0.9751  1.122"
+    "17 5f in8_input    GRR_P1V1_UCD_VOUT        1000    Volts  1.0192  1.1832"
+    "17 5f in9_input    GRR_P5V_DDR_UCD_VOUT     1000    Volts  4.753   5.253"
+    "17 5f in10_input   GRR_P3V3_STBY_UCD_VOUT   1000    Volts  2.9106  3.7026"
+    "17 5f in11_input   GRR_P1V8_STBY_UCD_VOUT   1000    Volts  1.5876  2.0196"
+    # "17 5f in12_input   GRR_P3V3_CLK_UCD_VOUT    1000    Volts  3.0772  3.5394"
+    # "17 5f in13_input   GRR_P1V8_CLK_UCD_VOUT    1000    Volts  1.6758  1.9278"
+    "17 5f in14_input   GRR_P5V_STBY_UCD_VOUT    1000    Volts  4.508   5.508"
     "17 5f in15_input   GRR_OCM_VIN12_UCD_VOUT   1000    Volts  10.8  13.8"
 
     # ------------- BMC board -------------
     # ucd90160
-    "28 68 in1_input    BMC_VCC_0V8_VOUT        1000    Volts  0.825  0.9"
-    "28 68 in2_input    BMC_VCC_1V1_VOUT        1000    Volts  1.13   1.17"
-    "28 68 in3_input    BMC_VCC_3V3_VOUT        1000    Volts  3.21   3.38"
-    "28 68 in4_input    BMC_VCC_1V8_VOUT        1000    Volts  1.75   1.85"
-    "28 68 in5_input    BMC_VCC_1V2_VOUT        1000    Volts  1.19   1.26"
-    "28 68 in6_input    BMC_VCC_1V0_VOUT	    1000    Volts  0.95   1.23"
-    "28 68 in7_input    BMC_VCC_DDRVDDQ_VOUT    1000    Volts  1.07   1.17"
-    "28 68 in8_input    BMC_VCC3V3_EMMC_VOUT    1000    Volts  2.7    3.6"
-    "28 68 in9_input    BMC_VCC1V8_EMMC_VOUT    1000    Volts  1.7    1.95"
+    "28 68 in1_input    BMC_VCC_0V8_VOUT        1000    Volts  0.8085   0.918"
+    "28 68 in2_input    BMC_VCC_1V1_VOUT        1000    Volts  1.1074   1.1934"
+    "28 68 in3_input    BMC_VCC_3V3_VOUT        1000    Volts  3.1458   3.4476"
+    "28 68 in4_input    BMC_VCC_1V8_VOUT        1000    Volts  1.715    1.887"
+    "28 68 in5_input    BMC_VCC_1V2_VOUT        1000    Volts  1.1662   1.2852"
+    "28 68 in6_input    BMC_VCC_1V0_VOUT	    1000    Volts  0.931    1.2546"
+    "28 68 in7_input    BMC_VCC_DDRVDDQ_VOUT    1000    Volts  1.0486   1.1934"
+    "28 68 in8_input    BMC_VCC3V3_EMMC_VOUT    1000    Volts  2.646    3.672"
+    "28 68 in9_input    BMC_VCC1V8_EMMC_VOUT    1000    Volts  1.666    1.989"
 
     # ------------- BASE board -------------
     # ina3221
@@ -629,7 +629,7 @@ PLATFORM_CHECKS_CONFIG=(
     "MISC_CPLD 66 0x31 clock 0x7f 0 CPLD_CLK_156M25_MONITOR_ALARM 0"
 
     # power
-    "BASE_CPLD 0  0xd power 0x13 1 SLP_S3_N    1"
+    # "BASE_CPLD 0  0xd power 0x13 1 SLP_S3_N    1"
     "BASE_CPLD 0  0xd power 0x13 2 SLP_S45_N   1"
     "BASE_CPLD 0  0xd power 0x13 3 THERMTRIP_N 1"
 

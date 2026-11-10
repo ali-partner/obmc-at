@@ -14,7 +14,6 @@ FILESEXTRAPATHS:prepend := "${THISDIR}:"
 
 SRC_URI += "file://init-platform.service \
             file://sensor-mon.service \
-            file://temperature-screening.service \
             file://emmc-initfs.service \
             file://COPYING \
            "
@@ -25,7 +24,6 @@ SYSTEMD_PACKAGES = "${PN}"
 SYSTEMD_SERVICE:${PN} = "\
                          init-platform.service \
                          sensor-mon.service \
-                         temperature-screening.service \
                          emmc-initfs.service \
                         "
 
@@ -34,7 +32,6 @@ do_install() {
   install -d ${D}${systemd_unitdir}/system
   install -m 644 ${UNPACKDIR}/init-platform.service ${D}${systemd_unitdir}/system
   install -m 644 ${UNPACKDIR}/sensor-mon.service ${D}${systemd_unitdir}/system
-  install -m 644 ${UNPACKDIR}/temperature-screening.service ${D}${systemd_unitdir}/system
   install -m 644 ${UNPACKDIR}/emmc-initfs.service ${D}${systemd_unitdir}/system
 }
 

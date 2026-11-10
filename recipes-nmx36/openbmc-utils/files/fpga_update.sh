@@ -1,10 +1,11 @@
 #!/bin/bash
 prog="$0"
+CHECK_PRODUCT_NAME="NA"
 
 
 usage() {
     echo "Usage: "
-    echo "$prog <file>"
+    echo "$prog <file> [sign|unsign]"
     echo
 }
 
@@ -41,6 +42,27 @@ do_fpga_flash_unbind() {
 }
 
 
+check_component_sign() {
+    local tmp_component=$1
+    local file_name=$2
+    local out_fw_file=$3
+    local output
+    local ret
+
+    echo "$tmp_component start unsign process, file name: $file_name"
+    # output=$(unsign_fw.sh $CHECK_PRODUCT_NAME $tmp_component $file_name $out_fw_file)
+    unsign_fw.sh $CHECK_PRODUCT_NAME $tmp_component $file_name $out_fw_file
+    ret=$?
+    # echo "${output}"
+    if [ "${ret}" -ne 0 ];then
+        echo "$tmp_component unsign process failed, return code = ${ret}"
+    else
+        echo "$tmp_component unsign process success"
+    fi
+    return $ret
+}
+
+
 do_update_fpga() {
     image=$1
     do_fpga_flash_bind
@@ -54,21 +76,44 @@ do_update_fpga() {
         echo "update FPGA fail."
     fi
     do_fpga_flash_unbind
-    exit $ret
 }
 
 
 source /usr/local/bin/openbmc-utils.sh
 
-if [ $# -lt 1 ]; then
+sign_mode="sign"
+
+if [ $# -eq 2 ]; then
+    if [[ "$2" == "sign" || "$2" == "unsign" ]]; then
+        sign_mode="$2"
+    else
+        echo "ERROR: Invalid last argument: $2. Must be 'sign' or 'unsign'."
+        usage
+        exit -1
+    fi
+elif [ $# -ne 1 ]; then
     usage
     exit -1
 fi
 
 image="$1"
- 
-do_update_fpga $image
 
+
+if [[ "$sign_mode" == "sign" ]]; then
+    out_fw_file="/tmp/tmp_fpga_flash.bin"
+    check_component_sign FPGA $image $out_fw_file
+    if [ $? -ne 0 ];then
+        exit -1
+    fi
+    do_update_fpga $out_fw_file
+    if [ -f "${out_fw_file}" ]; then
+        rm -f "${out_fw_file}"
+    fi
+else
+    do_update_fpga $image
+fi
+
+exit 0
 
 
 

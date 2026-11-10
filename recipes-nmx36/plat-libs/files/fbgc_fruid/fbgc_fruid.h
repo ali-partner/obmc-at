@@ -44,12 +44,12 @@ extern "C" {
 #define ACCTON_PATH_FRU_EEPROM_FAN1_BOARD    "/sys/bus/i2c/devices/94-0056/eeprom"
 
 #define ACCTON_PATH_FRU_EEPROM_FAN1 "/sys/bus/i2c/devices/88-0050/eeprom"
-#define ACCTON_PATH_FRU_EEPROM_FAN2 "/sys/bus/i2c/devices/89-0050/eeprom"
-#define ACCTON_PATH_FRU_EEPROM_FAN3 "/sys/bus/i2c/devices/90-0050/eeprom"
-#define ACCTON_PATH_FRU_EEPROM_FAN4 "/sys/bus/i2c/devices/91-0050/eeprom"
-#define ACCTON_PATH_FRU_EEPROM_FAN5 "/sys/bus/i2c/devices/40-0050/eeprom"
-#define ACCTON_PATH_FRU_EEPROM_FAN6 "/sys/bus/i2c/devices/41-0050/eeprom"
-#define ACCTON_PATH_FRU_EEPROM_FAN7 "/sys/bus/i2c/devices/42-0050/eeprom"
+#define ACCTON_PATH_FRU_EEPROM_FAN2 "/sys/bus/i2c/devices/40-0050/eeprom"
+#define ACCTON_PATH_FRU_EEPROM_FAN3 "/sys/bus/i2c/devices/89-0050/eeprom"
+#define ACCTON_PATH_FRU_EEPROM_FAN4 "/sys/bus/i2c/devices/41-0050/eeprom"
+#define ACCTON_PATH_FRU_EEPROM_FAN5 "/sys/bus/i2c/devices/90-0050/eeprom"
+#define ACCTON_PATH_FRU_EEPROM_FAN6 "/sys/bus/i2c/devices/42-0050/eeprom"
+#define ACCTON_PATH_FRU_EEPROM_FAN7 "/sys/bus/i2c/devices/91-0050/eeprom"
 #define ACCTON_PATH_FRU_EEPROM_FAN8 "/sys/bus/i2c/devices/43-0050/eeprom"
 
 int fbgc_get_fruid_name(uint8_t fru, char *name);

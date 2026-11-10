@@ -11,7 +11,7 @@ usage(){
 
 fan_board_type=$(get_fan_board_type)
 
-if [ $# -ne 2 ]; then
+if [ $# -ne 1 ]; then
     usage
     exit -1
 fi
@@ -35,11 +35,11 @@ local_index=""
 FANCPLD_SYSFS_DIR=""
 
 if [[ "$fan_board_type" == "0" ]]; then
-    if [[ "$1" -ge 1 ]] && [[ "$1" -le 4 ]]; then
-        local_index=$fan
+    if (( $1 % 2 == 1 )); then
+        local_index=$((($1 + 1) / 2))
         FANCPLD_SYSFS_DIR=$FAN1CPLD_SYSFS_DIR
-    elif [[ "$1" -ge 5 ]] && [[ "$1" -le 8 ]]; then
-        local_index=$((fan - 4))
+    else
+        local_index=$(($1 / 2))
         FANCPLD_SYSFS_DIR=$FAN2CPLD_SYSFS_DIR
     fi
 elif [[ "$fan_board_type" == "1" ]]; then

@@ -14,13 +14,13 @@ class threshold:
     PSU_TEMP_MIN =   0
     PSU_TEMP_MAX = 100
 
-    PSU_FAN_SPEED_MIN = 2000
-    PSU_FAN_SPEED_MAX = 35000
+    PSU_FAN_SPEED_MIN = 1250
+    PSU_FAN_SPEED_MAX = 40425
 
-    PSU_OUTPUT_VOLTAGE_MIN = 12
-    PSU_OUTPUT_VOLTAGE_MAX = 12.8
+    PSU_OUTPUT_VOLTAGE_MIN = 11.2
+    PSU_OUTPUT_VOLTAGE_MAX = 13.1
 
-    PSU_INPUT_VOLTAGE_MIN =  90
+    PSU_INPUT_VOLTAGE_MIN =  180
     PSU_INPUT_VOLTAGE_MAX = 264
 
     ERR_VALUE =  -99999000
@@ -29,13 +29,13 @@ class threshold:
     PSU_OUTPUT_POWER_MAX  = 2700
 
     PSU_INPUT_POWER_MIN = 0
-    PSU_INPUT_POWER_MAX = 2700
+    PSU_INPUT_POWER_MAX = 3200
 
     PSU_OUTPUT_CURRENT_MIN = 0
-    PSU_OUTPUT_CURRENT_MAX = 161.3
+    PSU_OUTPUT_CURRENT_MAX = 222.0
 
     PSU_INPUT_CURRENT_MIN = 0
-    PSU_INPUT_CURRENT_MAX = 9
+    PSU_INPUT_CURRENT_MAX = 18
 
     FAN_SPEED_MAX = 20700
     FAN_SPEED_MIN = 4050
@@ -377,8 +377,8 @@ devices = {
     "temps":[
         {
             "name": "CPU_TEMP",
-            "Min": -5,
-            "Max": 87,
+            "Min": -1,
+            "Max": 97,
             "value": {
                 "loc":"/usr/local/bin/get_thermal_sensor.sh --cpu",
                  "way":"command"
@@ -387,7 +387,7 @@ devices = {
         },
         {
             "name": "SWITCH_TEMP",
-            "Min": -5,
+            "Min": -1,
             "Max": 100,
             "value": {
                 "loc": "/usr/local/bin/get_thermal_sensor.sh --mac",
@@ -399,9 +399,9 @@ devices = {
             "name": "INLET_TEMP",
             "format": "float(float(%d)/1000)",
             "Min": -1,
-            "Max": 75,
+            "Max": 60,
             "value": {
-                "loc": "/sys/bus/i2c/devices/16-0048/hwmon/hwmon*/temp1_input",
+                "loc": "/sys/bus/i2c/devices/34-0048/hwmon/hwmon*/temp1_input",
                 "way": "sysfs"
             },
             "Unit": Unit.Temperature
@@ -423,7 +423,7 @@ devices = {
             "name": "GRR_PVNN_V",
             "format": "float(float(%d)/1000)",
             "Min": 0.55,
-            "Max": 1,
+            "Max": 1.1,
             "Unit": "V",
             "value": {
                 "loc": "/sys/bus/i2c/devices/17-0058/hwmon/hwmon*/in4_input",
@@ -467,7 +467,7 @@ devices = {
             "name": "GRR_PVNN_PCH_V",
             "format": "float(float(%d)/1000)",
             "Min": 0.55,
-            "Max": 1.0,
+            "Max": 1.1,
             "Unit": "V",
             "value": {
                 "loc": "/sys/bus/i2c/devices/17-0060/hwmon/hwmon*/in4_input",
@@ -478,7 +478,7 @@ devices = {
             "name": "GRR_P1V1_C",
             "format": "float(float(%d)/1000)",
             "Min": -2.0,
-            "Max": 13.4,
+            "Max": 13.5,
             "Unit": "A",
             "value": {
                 "loc": "/sys/bus/i2c/devices/17-0060/hwmon/hwmon*/curr3_input",
@@ -511,7 +511,7 @@ devices = {
             "name": "GRR_PVCCINF_V",
             "format": "float(float(%d)/1000)",
             "Min": 0.55,
-            "Max": 1.0,
+            "Max": 1.1,
             "Unit": "V",
             "value": {
                 "loc": "/sys/bus/i2c/devices/17-006e/hwmon/hwmon*/in4_input",
@@ -559,6 +559,732 @@ devices = {
             "Unit": "A",
             "value": {
                 "loc": "/sys/bus/i2c/devices/17-0027/curr2_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "GRR_PVNN_UCD_V",
+            "format": "float(float(%d)/1000)",
+            "Min": 0.539,
+            "Max": 1.122,
+            "Unit": "V",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/17-005f/hwmon/hwmon*/in1_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "GRR_PVNN_PCH_UCD_V",
+            "format": "float(float(%d)/1000)",
+            "Min": 0.539,
+            "Max": 1.122,
+            "Unit": "V",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/17-005f/hwmon/hwmon*/in2_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "GRR_P0V9_UCD_V",
+            "format": "float(float(%d)/1000)",
+            "Min": 0.8232,
+            "Max": 0.9792,
+            "Unit": "V",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/17-005f/hwmon/hwmon*/in3_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "GRR_PVCCINF_UCD_V",
+            "format": "float(float(%d)/1000)",
+            "Min": 0.539,
+            "Max": 1.122,
+            "Unit": "V",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/17-005f/hwmon/hwmon*/in4_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "GRR_PVCCIN_UCD_V",
+            "format": "float(float(%d)/1000)",
+            "Min": 1.372,
+            "Max": 1.836,
+            "Unit": "V",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/17-005f/hwmon/hwmon*/in5_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "GRR_P1V8_CPU_UCD_V",
+            "format": "float(float(%d)/1000)",
+            "Min": 1.6954,
+            "Max": 1.9074,
+            "Unit": "V",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/17-005f/hwmon/hwmon*/in6_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "GRR_P1V025_UCD_V",
+            "format": "float(float(%d)/1000)",
+            "Min": 0.9751,
+            "Max": 1.122,
+            "Unit": "V",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/17-005f/hwmon/hwmon*/in7_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "GRR_P1V1_UCD_V",
+            "format": "float(float(%d)/1000)",
+            "Min": 1.0192,
+            "Max": 1.1832,
+            "Unit": "V",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/17-005f/hwmon/hwmon*/in8_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "GRR_P5V_DDR_UCD_V",
+            "format": "float(float(%d)/1000)",
+            "Min": 4.753,
+            "Max": 5.253,
+            "Unit": "V",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/17-005f/hwmon/hwmon*/in9_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "GRR_P3V3_STBY_UCD_V",
+            "format": "float(float(%d)/1000)",
+            "Min": 2.9106,
+            "Max": 3.7026,
+            "Unit": "V",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/17-005f/hwmon/hwmon*/in10_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "GRR_P1V8_STBY_UCD_V",
+            "format": "float(float(%d)/1000)",
+            "Min": 1.5876,
+            "Max": 2.0196,
+            "Unit": "V",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/17-005f/hwmon/hwmon*/in11_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "GRR_P5V_STBY_UCD_V",
+            "format": "float(float(%d)/1000)",
+            "Min": 4.508,
+            "Max": 5.508,
+            "Unit": "V",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/17-005f/hwmon/hwmon*/in14_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "GRR_OCM_VIN12_UCD_V",
+            "format": "float(float(%d)/1000)",
+            "Min": 10.8,
+            "Max": 13.8,
+            "Unit": "V",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/17-005f/hwmon/hwmon*/in15_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "BMC_VCC_0V8_V",
+            "format": "float(float(%d)/1000)",
+            "Min": 0.8085,
+            "Max": 0.918,
+            "Unit": "V",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/28-0068/hwmon/hwmon*/in1_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "BMC_VCC_1V1_V",
+            "format": "float(float(%d)/1000)",
+            "Min": 1.1074,
+            "Max": 1.1934,
+            "Unit": "V",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/28-0068/hwmon/hwmon*/in2_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "BMC_VCC_3V3_V",
+            "format": "float(float(%d)/1000)",
+            "Min": 3.1458,
+            "Max": 3.4476,
+            "Unit": "V",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/28-0068/hwmon/hwmon*/in3_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "BMC_VCC_1V8_V",
+            "format": "float(float(%d)/1000)",
+            "Min": 1.715,
+            "Max": 1.887,
+            "Unit": "V",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/28-0068/hwmon/hwmon*/in4_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "BMC_VCC_1V2_V",
+            "format": "float(float(%d)/1000)",
+            "Min": 1.1662,
+            "Max": 1.2852,
+            "Unit": "V",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/28-0068/hwmon/hwmon*/in5_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "BMC_VCC_1V0_V",
+            "format": "float(float(%d)/1000)",
+            "Min": 0.931,
+            "Max": 1.2546,
+            "Unit": "V",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/28-0068/hwmon/hwmon*/in6_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "BMC_VCC_DDRVDDQ_V",
+            "format": "float(float(%d)/1000)",
+            "Min": 1.0486,
+            "Max": 1.1934,
+            "Unit": "V",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/28-0068/hwmon/hwmon*/in7_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "BMC_VCC3V3_EMMC_V",
+            "format": "float(float(%d)/1000)",
+            "Min": 2.646,
+            "Max": 3.672,
+            "Unit": "V",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/28-0068/hwmon/hwmon*/in8_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "BMC_VCC1V8_EMMC_V",
+            "format": "float(float(%d)/1000)",
+            "Min": 1.666,
+            "Max": 1.989,
+            "Unit": "V",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/28-0068/hwmon/hwmon*/in9_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "BASE_CLKGEN_1V8_V",
+            "format": "float(float(%d)/1000)",
+            "Min": 1.62,
+            "Max": 1.98,
+            "Unit": "V",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/31-0040/hwmon/hwmon*/in1_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "BASE_BMC_3V3_V",
+            "format": "float(float(%d)/1000)",
+            "Min": 2.97,
+            "Max": 3.63,
+            "Unit": "V",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/31-0040/hwmon/hwmon*/in2_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "BASE_SSD_1_3V3_V",
+            "format": "float(float(%d)/1000)",
+            "Min": 2.97,
+            "Max": 3.63,
+            "Unit": "V",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/31-0040/hwmon/hwmon*/in3_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "BASE_CLKGEN_1V8_C",
+            "format": "float(float(%d)/1000)",
+            "Min": -2.0,
+            "Max": 1.0,
+            "Unit": "A",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/31-0040/hwmon/hwmon*/curr1_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "BASE_BMC_3V3_C",
+            "format": "float(float(%d)/1000)",
+            "Min": -2.0,
+            "Max": 2.0,
+            "Unit": "A",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/31-0040/hwmon/hwmon*/curr2_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "BASE_SSD_1_3V3_C",
+            "format": "float(float(%d)/1000)",
+            "Min": -2.0,
+            "Max": 1.5,
+            "Unit": "A",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/31-0040/hwmon/hwmon*/curr3_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "BASE_SSD_2_3V3_V",
+            "format": "float(float(%d)/1000)",
+            "Min": 2.97,
+            "Max": 3.63,
+            "Unit": "V",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/29-0040/hwmon/hwmon*/in1_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "BASE_PHY_1V5_V",
+            "format": "float(float(%d)/1000)",
+            "Min": 1.35,
+            "Max": 1.65,
+            "Unit": "V",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/29-0040/hwmon/hwmon*/in2_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "BASE_PHY_1V05_V",
+            "format": "float(float(%d)/1000)",
+            "Min": 0.94,
+            "Max": 1.16,
+            "Unit": "V",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/29-0040/hwmon/hwmon*/in3_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "BASE_SSD_2_3V3_C",
+            "format": "float(float(%d)/1000)",
+            "Min": -2.0,
+            "Max": 1.5,
+            "Unit": "A",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/29-0040/hwmon/hwmon*/curr1_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "BASE_PHY_1V5_C",
+            "format": "float(float(%d)/1000)",
+            "Min": -2.0,
+            "Max": 1.5,
+            "Unit": "A",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/29-0040/hwmon/hwmon*/curr2_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "BASE_PHY_1V05_C",
+            "format": "float(float(%d)/1000)",
+            "Min": -2.0,
+            "Max": 3,
+            "Unit": "A",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/29-0040/hwmon/hwmon*/curr3_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "BASE_PHY_3V3_V",
+            "format": "float(float(%d)/1000)",
+            "Min": 2.97,
+            "Max": 3.63,
+            "Unit": "V",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/30-0040/hwmon/hwmon*/in1_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "BASE_STB_3V3_V",
+            "format": "float(float(%d)/1000)",
+            "Min": 2.97,
+            "Max": 3.63,
+            "Unit": "V",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/30-0040/hwmon/hwmon*/in2_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "BASE_GRR_12V_V",
+            "format": "float(float(%d)/1000)",
+            "Min": 10.8,
+            "Max": 13.8,
+            "Unit": "V",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/30-0040/hwmon/hwmon*/in3_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "BASE_PHY_3V3_C",
+            "format": "float(float(%d)/1000)",
+            "Min": -2.0,
+            "Max": 1.0,
+            "Unit": "A",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/30-0040/hwmon/hwmon*/curr1_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "BASE_STB_3V3_C",
+            "format": "float(float(%d)/1000)",
+            "Min": -2.0,
+            "Max": 1.5,
+            "Unit": "A",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/30-0040/hwmon/hwmon*/curr2_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "BASE_GRR_12V_C",
+            "format": "float(float(%d)/1000)",
+            "Min": -2.0,
+            "Max": 3,
+            "Unit": "A",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/30-0040/hwmon/hwmon*/curr3_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "MAIN_SB_3V3_V",
+            "format": "float(float(%d)/1000)",
+            "Min": 2.97,
+            "Max": 3.65,
+            "Unit": "V",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/36-0040/hwmon/hwmon*/in1_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "MAIN_SB_1V8_V",
+            "format": "float(float(%d)/1000)",
+            "Min": 1.62,
+            "Max": 1.98,
+            "Unit": "V",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/36-0040/hwmon/hwmon*/in2_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "MAIN_SB_3V3_C",
+            "format": "float(float(%d)/1000)",
+            "Min": -2.0,
+            "Max": 4.4,
+            "Unit": "A",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/36-0040/hwmon/hwmon*/curr1_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "MAIN_SB_1V8_C",
+            "format": "float(float(%d)/1000)",
+            "Min": -2.0,
+            "Max": 1.43,
+            "Unit": "A",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/36-0040/hwmon/hwmon*/curr2_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "MAIN_CPLD_3V3_V",
+            "format": "float(float(%d)/1000)",
+            "Min": 2.97,
+            "Max": 3.65,
+            "Unit": "V",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/35-0040/hwmon/hwmon*/in1_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "MAIN_PLL_1V8_V",
+            "format": "float(float(%d)/1000)",
+            "Min": 1.62,
+            "Max": 1.98,
+            "Unit": "V",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/35-0040/hwmon/hwmon*/in2_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "MAIN_PLL_3V3_V",
+            "format": "float(float(%d)/1000)",
+            "Min": 2.97,
+            "Max": 3.65,
+            "Unit": "V",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/35-0040/hwmon/hwmon*/in3_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "MAIN_CPLD_3V3_C",
+            "format": "float(float(%d)/1000)",
+            "Min": -2.0,
+            "Max": 4.4,
+            "Unit": "A",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/35-0040/hwmon/hwmon*/curr1_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "MAIN_PLL_1V8_C",
+            "format": "float(float(%d)/1000)",
+            "Min": -2.0,
+            "Max": 1.1,
+            "Unit": "A",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/35-0040/hwmon/hwmon*/curr2_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "MAIN_PLL_3V3_C",
+            "format": "float(float(%d)/1000)",
+            "Min": -2.0,
+            "Max": 0.66,
+            "Unit": "A",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/35-0040/hwmon/hwmon*/curr3_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "MAIN_FPGA_3V3_V",
+            "format": "float(float(%d)/1000)",
+            "Min": 2.97,
+            "Max": 3.65,
+            "Unit": "V",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/38-0040/hwmon/hwmon*/in1_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "MAIN_FPGA_1V8_V",
+            "format": "float(float(%d)/1000)",
+            "Min": 1.62,
+            "Max": 1.98,
+            "Unit": "V",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/38-0040/hwmon/hwmon*/in2_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "MAIN_FPGA_1V2_V",
+            "format": "float(float(%d)/1000)",
+            "Min": 1.08,
+            "Max": 1.32,
+            "Unit": "V",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/38-0040/hwmon/hwmon*/in3_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "MAIN_FPGA_3V3_C",
+            "format": "float(float(%d)/1000)",
+            "Min": -2.0,
+            "Max": 0.33,
+            "Unit": "A",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/38-0040/hwmon/hwmon*/curr1_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "MAIN_FPGA_1V8_C",
+            "format": "float(float(%d)/1000)",
+            "Min": -2.0,
+            "Max": 0.55,
+            "Unit": "A",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/38-0040/hwmon/hwmon*/curr2_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "MAIN_FPGA_1V2_C",
+            "format": "float(float(%d)/1000)",
+            "Min": -2.0,
+            "Max": 0.11,
+            "Unit": "A",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/38-0040/hwmon/hwmon*/curr3_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "MAIN_DRMOS_5V_V",
+            "format": "float(float(%d)/1000)",
+            "Min": 4.5,
+            "Max": 5.5,
+            "Unit": "V",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/37-0040/hwmon/hwmon*/in1_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "MAIN_QPS_1V8_V",
+            "format": "float(float(%d)/1000)",
+            "Min": 1.62,
+            "Max": 1.98,
+            "Unit": "V",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/37-0040/hwmon/hwmon*/in3_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "MAIN_DRMOS_5V_C",
+            "format": "float(float(%d)/1000)",
+            "Min": -2.0,
+            "Max": 6.6,
+            "Unit": "A",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/37-0040/hwmon/hwmon*/curr1_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "MAIN_QPS_1V8_C",
+            "format": "float(float(%d)/1000)",
+            "Min": -2.0,
+            "Max": 0.352,
+            "Unit": "A",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/37-0040/hwmon/hwmon*/curr3_input",
+                "way": "sysfs"
+            }
+        },
+                {
+            "name": "MAIN_FPGA_1V0_V",
+            "format": "float(float(%d)/1000)",
+            "Min": 0.9,
+            "Max": 1.1,
+            "Unit": "V",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/39-0040/hwmon/hwmon*/in1_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "MAIN_AVDD_1V1_V",
+            "format": "float(float(%d)/1000)",
+            "Min": 0.9975,
+            "Max": 1.1025,
+            "Unit": "V",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/39-0040/hwmon/hwmon*/in2_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "MAIN_DVDD_0V7_V",
+            "format": "float(float(%d)/1000)",
+            "Min": 0.665,
+            "Max": 0.735,
+            "Unit": "V",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/39-0040/hwmon/hwmon*/in3_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "MAIN_FPGA_1V0_C",
+            "format": "float(float(%d)/1000)",
+            "Min": -2.0,
+            "Max": 0.5,
+            "Unit": "A",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/39-0040/hwmon/hwmon*/curr1_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "MAIN_AVDD_1V1_C",
+            "format": "float(float(%d)/1000)",
+            "Min": -2.0,
+            "Max": 2.2,
+            "Unit": "A",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/39-0040/hwmon/hwmon*/curr2_input",
+                "way": "sysfs"
+            }
+        },
+        {
+            "name": "MAIN_DVDD_0V7_C",
+            "format": "float(float(%d)/1000)",
+            "Min": -2.0,
+            "Max": 2.2,
+            "Unit": "A",
+            "value": {
+                "loc": "/sys/bus/i2c/devices/39-0040/hwmon/hwmon*/curr3_input",
                 "way": "sysfs"
             }
         },
@@ -983,7 +1709,7 @@ devices = {
         {
             "name": "OSFP33_40_3V3_C",
             "format": "float(float(%d)/1000)",
-            "Min": 0.0,
+            "Min": -2.0,
             "Max": 117.7,
             "Unit": "A",
             "value": {
@@ -994,7 +1720,7 @@ devices = {
         {
             "name": "OSFP41_48_3V3_C",
             "format": "float(float(%d)/1000)",
-            "Min": 0.0,
+            "Min": -2.0,
             "Max": 117.7,
             "Unit": "A",
             "value": {
@@ -1027,7 +1753,7 @@ devices = {
         {
             "name": "OSFP49_56_3V3_C",
             "format": "float(float(%d)/1000)",
-            "Min": 0.0,
+            "Min": -2.0,
             "Max": 117.7,
             "Unit": "A",
             "value": {
@@ -1038,7 +1764,7 @@ devices = {
         {
             "name": "OSFP57_64_3V3_C",
             "format": "float(float(%d)/1000)",
-            "Min": 0.0,
+            "Min": -2.0,
             "Max": 117.7,
             "Unit": "A",
             "value": {
@@ -1734,8 +2460,8 @@ devices = {
             "SysFanLedCtrl": {"loc": "/sys/bus/i2c/devices/8-000d/fan_led_ctrl_status", "way": "sysfs"},
             "SysFanLedState": {"loc": "/sys/bus/i2c/devices/8-000d/fan_led_ctrl", "way": "sysfs"},
             "SysFanLedAttrs": {"off": {"blink": 0x00, "steady": 0x00}, "green": {"blink": 0x03, "steady": 0x04}, "yellow": {"blink": 0x05, "steady": 0x06}},
-            "PortLedState_1": {"loc": "/sys/bus/i2c/devices/64-0031/led_ctrl", "way": "sysfs"},
-            "PortLedState_2": {"loc": "/sys/bus/i2c/devices/65-0031/led_ctrl", "way": "sysfs"},
+            "PortLedState_1": {"loc": "/sys/bus/i2c/devices/68-0031/led_ctrl", "way": "sysfs"},
+            # "PortLedState_2": {"loc": "/sys/bus/i2c/devices/65-0031/led_ctrl", "way": "sysfs"},
             "PortLedAttrs": {"off": 0x00, "on": 0x03},
         },
     ],

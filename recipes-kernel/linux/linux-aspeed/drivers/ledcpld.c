@@ -88,6 +88,13 @@ static const i2c_dev_attr_st ledcpld_attr_table[] = {
     I2C_DEV_ATTR_STORE_DEFAULT,
     0xf, 0, 8,
   },
+  {
+    "led_ctrl",
+    NULL,
+    I2C_DEV_ATTR_SHOW_DEFAULT,
+    I2C_DEV_ATTR_STORE_DEFAULT,
+    0x2f, 0, 2,
+  },
 
 };
 

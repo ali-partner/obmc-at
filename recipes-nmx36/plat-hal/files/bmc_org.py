@@ -348,8 +348,8 @@ class bmc(devicebase):
             return -1
 
         ret_1, val_1 = self.set_value(self.port_led_status_1, self.port_led_attrs[command])
-        ret_2, val_2 = self.set_value(self.port_led_status_2, self.port_led_attrs[command])
-        if ret_1 == False or ret_2 == False:
+        # ret_2, val_2 = self.set_value(self.port_led_status_2, self.port_led_attrs[command])
+        if ret_1 == False:
             return -1
 
         return 0

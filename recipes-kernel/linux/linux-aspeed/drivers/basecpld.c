@@ -97,15 +97,15 @@ static const i2c_dev_attr_st basecpld_attr_table[] = {
     NULL,
     0x10, 0, 2,
   },
-  {
-    "cpu_slp_s3_state",
-    "cpu S3 state\n"
-    "0: Not entered S3 state\n"
-    "1: Entered S3 state",
-    I2C_DEV_ATTR_SHOW_DEFAULT,
-    I2C_DEV_ATTR_STORE_DEFAULT,
-    0x13, 1, 1,
-  },
+  // {
+  //   "cpu_slp_s3_state",
+  //   "cpu S3 state\n"
+  //   "0: Not entered S3 state\n"
+  //   "1: Entered S3 state",
+  //   I2C_DEV_ATTR_SHOW_DEFAULT,
+  //   I2C_DEV_ATTR_STORE_DEFAULT,
+  //   0x13, 1, 1,
+  // },
   {
     "cpu_slp_s45_state",
     "cpu S45 state\n"

@@ -79,7 +79,7 @@ declare -A device_map=(
 bios_ver=$(ipmitool mc getsysinfo system_fw_version | awk -F'.' '{print $(NF-1)"."$NF}')
 
 printf "%-18s%-s  %s\n" "Device" ":" "NMX-36"
-printf "%-18s%-s  %s\n" "BMC" ":" "00.04"
+printf "%-18s%-s  %s\n" "BMC" ":" "00.09"
 printf "%-18s%-s  %s\n" "BIOS" ":" "$bios_ver"
 printf "%-18s%-s  %s\n" "Device ID" ":" "ast2700"
 

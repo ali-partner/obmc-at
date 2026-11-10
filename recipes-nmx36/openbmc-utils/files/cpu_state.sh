@@ -8,7 +8,7 @@
 PROGRAM_TITLE=`basename $0`
 
 #Bit[1:1] @ register 0x13, 0: Not entered S3 state, 1: Entered S3 state
-CPU_STATE_S3_STATE1="${BASECPLD_SYSFS_DIR}/cpu_slp_s3_state"
+# CPU_STATE_S3_STATE1="${BASECPLD_SYSFS_DIR}/cpu_slp_s3_state"
 #Bit[2:2] @ register 0x13, 0: Not entered S45 state,1: Entered S45 state
 CPU_STATE_S4_STATE2="${BASECPLD_SYSFS_DIR}/cpu_slp_s45_state"
 #Bit[0:0] @ register 0x30, 0: abnormal 1: normal
@@ -19,30 +19,30 @@ state_now=0
 
 cpu_state_last(){
 
-    CMD_STATE1=`cat $CPU_STATE_S3_STATE1 | sed -n 1p`
+    # CMD_STATE1=`cat $CPU_STATE_S3_STATE1 | sed -n 1p`
     CMD_STATE2=`cat $CPU_STATE_S4_STATE2 | sed -n 1p`
     CMD_STATE3=`cat $CPU_STATE_PLTRST_STATE3 | sed -n 1p`
 
-    if [[ $CMD_STATE1 -eq 0 ]] && [[ $CMD_STATE2 -eq 0 ]] && [[ $CMD_STATE3 -eq 0 ]]; then
+    if [[ $CMD_STATE2 -eq 0 ]] && [[ $CMD_STATE3 -eq 0 ]]; then
         state_last=0
     fi
 
-    if [[ $CMD_STATE1 -eq 1 ]] && [[ $CMD_STATE2 -eq 1 ]] && [[ $CMD_STATE3 -eq 1 ]]; then
+    if [[ $CMD_STATE2 -eq 1 ]] && [[ $CMD_STATE3 -eq 1 ]]; then
         state_last=1
     fi
 }
 
 cpu_state_now(){
 
-    CMD_STATE1=`cat $CPU_STATE_S3_STATE1 | sed -n 1p`
+    # CMD_STATE1=`cat $CPU_STATE_S3_STATE1 | sed -n 1p`
     CMD_STATE2=`cat $CPU_STATE_S4_STATE2 | sed -n 1p`
     CMD_STATE3=`cat $CPU_STATE_PLTRST_STATE3 | sed -n 1p`
 
-    if [[ $CMD_STATE1 -eq 0 ]] && [[ $CMD_STATE2 -eq 0 ]] && [[ $CMD_STATE3 -eq 0 ]]; then
+    if [[ $CMD_STATE2 -eq 0 ]] && [[ $CMD_STATE3 -eq 0 ]]; then
         state_now=0
     fi
 
-    if [[ $CMD_STATE1 -eq 1 ]] && [[ $CMD_STATE2 -eq 1 ]] && [[ $CMD_STATE3 -eq 1 ]]; then
+    if [[ $CMD_STATE2 -eq 1 ]] && [[ $CMD_STATE3 -eq 1 ]]; then
         state_now=1
     fi
 }

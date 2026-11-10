@@ -1,9 +1,0 @@
-[Unit]
-Description=The D-value temperature screening service
-After=fanctrl.service
-
-[Service]
-ExecStart=/usr/local/bin/temperature_screening.sh start
-Restart=on-failure
-RestartSec=30s
-

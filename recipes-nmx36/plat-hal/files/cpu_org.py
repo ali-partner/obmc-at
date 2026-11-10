@@ -13,7 +13,7 @@ class cpu(devicebase):
     def __init__(self, conf=None):
         if conf is not None:
             self.name = conf.get("name", None)
-            self.cpu_status_s3 = conf.get("CpuStatus_S3", None)
+            # self.cpu_status_s3 = conf.get("CpuStatus_S3", None)
             self.cpu_status_s45 = conf.get("CpuStatus_S45", None)
             self.cpu_reset = conf.get("CpuReset", None)
             self.cpu_mcerr = conf.get("CpuMCERR", None)
@@ -31,11 +31,11 @@ class cpu(devicebase):
         """
         cpu_state_dict = {"cpu_last_state" : 0, "cpu_now_state" : 0}
         for index in range(len(cpu_state_dict)):
-            ret, val = self.read_sysfs_value(self.cpu_status_s3)
-            if ret == False:
-                return "N/A"
-            else:
-                cpu_state_S3_value = val
+            # ret, val = self.read_sysfs_value(self.cpu_status_s3)
+            # if ret == False:
+            #     return "N/A"
+            # else:
+            #     cpu_state_S3_value = val
 
             ret, val = self.read_sysfs_value(self.cpu_status_s45)
             if ret == False:
@@ -49,12 +49,12 @@ class cpu(devicebase):
             else:
                 cpu_state_reset_value = val
 
-            if cpu_state_S3_value == 0 and cpu_state_S45_value == 0 and cpu_state_reset_value == 0:
+            if cpu_state_S45_value == 0 and cpu_state_reset_value == 0:
                 if index == 0:
                     cpu_state_dict["cpu_last_state"] = 0
                 else:
                     cpu_state_dict["cpu_now_state"] = 0
-            elif cpu_state_S3_value == 1 and cpu_state_S45_value == 1 and cpu_state_reset_value == 1:
+            elif cpu_state_S45_value == 1 and cpu_state_reset_value == 1:
                 if index == 0:
                     cpu_state_dict["cpu_last_state"] = 1
                 else:

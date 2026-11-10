@@ -8,6 +8,14 @@
 from .osutil import osutil
 from .baseutil import baseutil
 
+# FRU content is static FRU EEPROM data. Cache the parsed result per device name
+# so that repeated reads (e.g. get_fru_info + AirFlow within one API call, and
+# repeated API polls) do not re-fork `fruid-util` and re-read the EEPROM.
+# The fan cache is invalidated by its presence status only: if the fan's
+# presence changes between reads, the cached data is discarded and re-read.
+_FRU_BASIC_INFO_CACHE = {}
+_FRU_FAN_NAMES = {"fan1", "fan2", "fan3", "fan4", "fan5", "fan6", "fan7", "fan8"}
+
 class devicebase:
     _name = None
 
@@ -167,10 +175,24 @@ class devicebase:
             "Product Version"       : "N/A",
             "Product Serial"        : "N/A",
         }
-        
+
+        is_fan = name in _FRU_FAN_NAMES
+        if is_fan:
+            present = False
+            try:
+                present = self.present
+            except Exception:
+                present = False
+            cached = _FRU_BASIC_INFO_CACHE.get(name)
+            if (cached is not None
+                    and cached[0] == present):
+                return cached[1]
+
         cmd = 'fruid-util %s' % (name)
         ret, output = osutil.command(cmd)
         if ret != 0 or output is None or output == '':
+            if is_fan:
+                _FRU_BASIC_INFO_CACHE[name] = (present, basic_info_dict)
             return basic_info_dict
 
         for item in basic_info_dict:
@@ -179,6 +201,8 @@ class devicebase:
                     basic_info_dict[item] = line.split(':', 1)[-1].strip()
                     break
 
+        if is_fan:
+            _FRU_BASIC_INFO_CACHE[name] = (present, basic_info_dict)
         return basic_info_dict
 
 

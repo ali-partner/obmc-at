@@ -42,7 +42,7 @@ function ocm_board_init()
 
 }
 
-ocm_board_init
+# ocm_board_init
 
 echo "To store version ..."
 /usr/local/bin/store_version.sh

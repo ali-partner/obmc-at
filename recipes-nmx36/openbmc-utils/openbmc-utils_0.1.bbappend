@@ -14,13 +14,10 @@ LOCAL_URI += "file://board-utils.sh \
             file://sol.sh \
             file://spi_util.sh \
             file://us_console.sh \
-            file://diag_i2c.sh \
             file://boot_area.sh \
             file://system_led.sh \
             file://power.sh \
             file://switch_uart.sh \
-            file://diag_peci.sh \
-            file://Diag_batt.sh \
             file://create_vlan_intf \
             file://detect_AER.sh \
             file://detect_MSR.sh \
@@ -36,40 +33,24 @@ LOCAL_URI += "file://board-utils.sh \
             file://reset_mac.sh \
             file://fan_util.sh \
             file://fan_watchdog.sh \
-            file://diag_sensors.sh \
             file://switch_cpld.sh \
             file://power_force_ctrl.sh \
             file://phy_update.sh \
-            file://diag_asic_voltage.py \
             file://fpga_flash.sh \
             file://boot_util.sh \
-            file://diag_flash_info.sh \
-            file://diag_fru_eeprom_wp.sh \
-            file://diag_rtc.sh \
             file://power_util.sh \
             file://show_version.sh \
             file://diag_fan.sh \
-            file://diag_spi.sh \
-            file://diag_led.sh \
-            file://diag_start_check.sh \
-            file://diag_uart.sh \
             file://fwm_util.sh \
-            file://diag_platform_func.sh \
-            file://diag_psu.sh \
-            file://diag_gpio_util.sh \
             file://reset_reason.sh \
-            file://diag_bmc_mtd.sh \
             file://get_thermal_sensor.sh \
-            file://diag_mgmt_func.sh \
             file://spi_util_gpio.sh \
             file://sp4_flash.sh \
-            file://diag_miim.sh \
             file://setup_board.sh \
             file://setup_platform.sh \
             file://init_early.sh \
             file://store_version.sh \
             file://sensor-mon.sh \
-            file://temperature_screening.sh \
             file://hal_rawcmd.py \
             file://fw_refresh.sh \
             file://ast-mdio.py \
@@ -78,11 +59,6 @@ LOCAL_URI += "file://board-utils.sh \
             file://gpio_utils.sh \
             file://fpga_update.sh \
             file://mac_power_off.sh \
-            file://diag_mac_power.sh \
-            file://avs_current_monitor.sh \
-            file://avs-chip-func.py \
-            file://diag_fan_speed_check.sh \
-            file://diag_otp_boot.sh \
             file://dump_MSR_reg.sh \
             file://set_product_name.sh \
             file://show_product_name.sh \
@@ -90,6 +66,7 @@ LOCAL_URI += "file://board-utils.sh \
             file://AS42-64S-AT_board-utils.sh \
             file://setup_ina3221.sh \
             file://emmc_cycle.sh \
+            file://unsign_fw.sh \
            "
 
 OPENBMC_UTILS_FILES += " \
@@ -105,13 +82,10 @@ OPENBMC_UTILS_FILES += " \
     sol.sh \
     spi_util.sh \
     us_console.sh \
-    diag_i2c.sh \
     boot_area.sh \
     system_led.sh \
     power.sh \
     switch_uart.sh \
-    diag_peci.sh \
-    Diag_batt.sh \
     create_vlan_intf \
     detect_AER.sh \
     detect_MSR.sh \
@@ -127,40 +101,24 @@ OPENBMC_UTILS_FILES += " \
     reset_mac.sh \
     fan_util.sh \
     fan_watchdog.sh \
-    diag_sensors.sh \
     switch_cpld.sh \
     power_force_ctrl.sh \
     phy_update.sh \
-    diag_asic_voltage.py \
     fpga_flash.sh \
     boot_util.sh \
-    diag_flash_info.sh \
-    diag_fru_eeprom_wp.sh \
-    diag_rtc.sh \
     power_util.sh \
     show_version.sh \
     diag_fan.sh \
-    diag_spi.sh \
-    diag_led.sh \
-    diag_start_check.sh \
-    diag_uart.sh \
     fwm_util.sh \
-    diag_platform_func.sh \
-    diag_psu.sh \
-    diag_gpio_util.sh \
     reset_reason.sh \
-    diag_bmc_mtd.sh \
     get_thermal_sensor.sh \
-    diag_mgmt_func.sh \
     setup_board.sh \
     spi_util_gpio.sh \
     sp4_flash.sh \
-    diag_miim.sh \
     setup_platform.sh \
     init_early.sh \
     store_version.sh \
     sensor-mon.sh \
-    temperature_screening.sh \
     hal_rawcmd.py \
     fw_refresh.sh \
     ast-mdio.py \
@@ -169,11 +127,6 @@ OPENBMC_UTILS_FILES += " \
     gpio_jtag_init.sh \
     fpga_update.sh \
     mac_power_off.sh \
-    diag_mac_power.sh \
-    avs_current_monitor.sh \
-    avs-chip-func.py \
-    diag_fan_speed_check.sh \
-    diag_otp_boot.sh \
     dump_MSR_reg.sh \
     set_product_name.sh \
     show_product_name.sh \
@@ -181,5 +134,6 @@ OPENBMC_UTILS_FILES += " \
     AS42-64S-AT_board-utils.sh \
     setup_ina3221.sh \
     emmc_cycle.sh \
+    unsign_fw.sh \
     "
 
